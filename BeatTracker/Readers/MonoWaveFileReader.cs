@@ -4,7 +4,7 @@ using NAudio.Wave;
 
 namespace BeatTracker.Readers
 {
-    public class MonoWaveFileReader : IWaveStream, IDisposable
+    public class MonoWaveFileReader : IWaveStreamReader, IDisposable
     {
         private readonly Stream _stream;
         private readonly WaveFileReader _reader;
@@ -41,7 +41,7 @@ namespace BeatTracker.Readers
         private event EventHandler<SampleArgs> DataAvailable;
         public WaveFormat WaveFormat => _reader.WaveFormat;
 
-        event EventHandler<SampleArgs> IWaveStream.DataAvailable
+        event EventHandler<SampleArgs> IWaveStreamReader.DataAvailable
         {
 #pragma warning disable 4014
             add

@@ -11,11 +11,10 @@ namespace BeatTracker.Tracking
 {
     public partial class Tracker : IDisposable
     {
-        private readonly IWaveStream _source;
+        private readonly IWaveStreamReader _source;
         private WaveFileWriter _writer;
 
-
-        public Tracker(IWaveStream source)
+        public Tracker(IWaveStreamReader source)
         {
             _writer = new WaveFileWriter(@"C:\tmp\fft.wav", new WaveFormat(44100, 1));
 
