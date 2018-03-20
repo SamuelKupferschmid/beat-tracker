@@ -4,9 +4,9 @@ mono: none
 dotnet: 1.1.5
 
 install:
- - nuget restore BeatTracker.sln
- - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
+ - dotnet restore
+ - dotnet add BeatTracker.Test package xunit.runners -v 1.9.2 --package-directory testrunner
 
 script:
  - dotnet restore
- - dotnet ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./BeatTracker.Test/bin/Release/netcoreapp2.0/BeatTracker.dll"
+ - dotnet ./testrunner/xunit.runners/1.9.2/tools/xunit.console.clr4.exe ./BeatTracker.Test/bin/Release/netcoreapp2.0/BeatTracker.dll
