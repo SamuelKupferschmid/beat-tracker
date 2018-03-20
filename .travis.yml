@@ -2,14 +2,14 @@ language: csharp
 solution: BeatTracker.sln
 language: csharp
 mono: none
-dotnet: 1.1.5
-script:
- - dotnet restore
- - dotnet build
+dotnet: 2.0
 
 install:
   - nuget restore BeatTracker.sln
   - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
-script:
+
+ script:
+  - dotnet restore
+  - dotnet build
   - xbuild /p:Configuration=Release BeatTracker.sln
   - dotnet ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./BeatTracker.Test/bin/Release/netcoreapp2.0/BeatTracker.dll"
