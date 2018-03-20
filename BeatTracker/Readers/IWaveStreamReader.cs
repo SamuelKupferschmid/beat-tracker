@@ -3,7 +3,7 @@ using NAudio.Wave;
 
 namespace BeatTracker.Readers
 {
-    public interface IWaveStream
+    public interface IWaveStreamReader
     {
         event EventHandler<SampleArgs> DataAvailable;
 

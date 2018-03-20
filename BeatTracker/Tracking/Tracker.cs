@@ -5,9 +5,9 @@ namespace BeatTracker.Tracking
 {
     public partial class Tracker: IDisposable
     {
-        private readonly IWaveStream _source;
+        private readonly IWaveStreamReader _source;
 
-        public Tracker(IWaveStream source)
+        public Tracker(IWaveStreamReader source)
         {
             _source = source;
         }

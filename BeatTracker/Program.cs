@@ -23,8 +23,8 @@ namespace BeatTracker
 
             var tracker = new Tracker(reader);
             
-            // var output = new MidiMetronomeOutput(tracker);
-            var output = new ConsoleWriter(tracker);
+             var output = new MidiMetronomeWriter(tracker);
+            // var output = new ConsoleWriter(tracker);
 
             output.Start();
             tracker.Start();

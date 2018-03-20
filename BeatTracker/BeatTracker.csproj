@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Readers\IWaveStreamReader.cs" />
     <Compile Include="Writers\ConsoleWriter.cs" />
     <Compile Include="Writers\MidiMetronomeWriter.cs" />
     <Compile Include="Writers\SynchronizableWriter.cs" />
