@@ -18,18 +18,17 @@ namespace BeatTracker
     {
         static void Main(string[] args)
         {
-
             MonoWaveFileReader reader = new MonoWaveFileReader("data/ag1.wav");
 
-            var tracker = new Tracker(reader);
-            
-            // var output = new MidiMetronomeOutput(tracker);
-            var output = new ConsoleWriter(tracker);
+            using (var tracker = new Tracker(reader))
+            {
 
-            output.Start();
-            tracker.Start();
+                // var output = new MidiMetronomeOutput(tracker);
+                var output = new ConsoleWriter(tracker);
 
-            Console.ReadLine();
+                output.Start();
+                tracker.Start();
+            }
         }
     }
 }
