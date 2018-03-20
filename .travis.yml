@@ -1,0 +1,12 @@
+language: csharp
+solution: BeatTracker.sln
+mono: none
+dotnet: 1.1.5
+
+install:
+ - dotnet restore
+ - dotnet add BeatTracker.Test package xunit.runners -v 1.9.2 --package-directory testrunner
+
+script:
+ - dotnet restore
+ - dotnet ./testrunner/xunit.runners/1.9.2/tools/xunit.console.clr4.exe ./BeatTracker.Test/bin/Release/netcoreapp2.0/BeatTracker.dll
