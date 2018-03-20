@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using BeatTracker.Readers;
 using BeatTracker.Tracking;
 using BeatTracker.Writers;
-using NAudio.Wave;
-using Sanford.Multimedia;
-using Sanford.Multimedia.Midi;
-using Timer = System.Timers.Timer;
 
 namespace BeatTracker
 {

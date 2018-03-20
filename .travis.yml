@@ -1,0 +1,9 @@
+language: csharp
+solution: BeatTracker.sln
+
+install:
+  - nuget restore BeatTracker.sln
+  - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release BeatTracker.sln
+  - mono ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./BeatTracker.Test/bin/Release/netcoreapp2.0/BeatTracker.dll"

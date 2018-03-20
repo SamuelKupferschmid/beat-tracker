@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BeatTracker.Tracking;
-using EasyAssertions;
+using FluentAssertions;
 using Xunit;
 
 namespace BeatTracker.Test
@@ -14,7 +14,7 @@ namespace BeatTracker.Test
         [Fact]
         public void Test1()
         {
-            new Tracker(null).ShouldNotBeNull();
+            new Tracker(null).Should().NotBeNull();
         }
     }
 }
