@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BeatTracker.Tracking;
-using EasyAssertions;
-using Xunit;
 
-namespace BeatTracker.Test
+namespace BeatTracker.Writers
 {
-    public class TrackerTests
+    public class WaveBeatWriter
     {
-        [Fact]
-        public void Test1()
+        public WaveBeatWriter(Tracker tracker)
         {
-            new Tracker(null).ShouldNotBeNull();
+
         }
     }
 }
