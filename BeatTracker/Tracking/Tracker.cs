@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using BeatTracker.Readers;
@@ -12,41 +13,49 @@ namespace BeatTracker.Tracking
     public partial class Tracker : IDisposable
     {
         private readonly IWaveStreamReader _source;
-        private WaveFileWriter _writer;
 
         public Tracker(IWaveStreamReader source)
         {
-            _writer = new WaveFileWriter(@"C:\tmp\fft.wav", new WaveFormat(44100, 1));
-
             _source = source;
+
+            FrequencyAnalyzer = new FrequencyAnalyzer(source);
+            PulseAnalyzer = new PulseAnalyzer();
+
+            FrequencyAnalyzer.FrameAvailable += (sender, frameValue) => PulseAnalyzer.AddFrame(frameValue);
+            PulseAnalyzer.PulseExtracted += PulseAnalyzerOnPulseExtracted;
         }
 
         public event EventHandler<BeatInfo> BeatInfoChanged;
 
+        public FrequencyAnalyzer FrequencyAnalyzer { get; }
+
+        public BeatInfo BeatInfo { get; private set; }
+
+        public PulseAnalyzer PulseAnalyzer { get; }
+
         public void Start()
         {
-            this._source.DataAvailable += DataAvailable;
+            _source.Start();
         }
 
-        private void DataAvailable(object sender, SampleArgs e)
+        private void PulseAnalyzerOnPulseExtracted(object o, IEnumerable<(float bpm, float confidence)> candidates)
         {
-            Fourier.Forward(e.Data, new float[e.Data.Length]);
-            foreach (var f in e.Data)
+            var bpm = candidates.OrderByDescending(c => c.confidence).First().bpm;
+
+            OnBeatInfoChanged(new BeatInfo(bpm));
+        }
+
+        protected virtual void OnBeatInfoChanged(BeatInfo e)
+        {
+            if (BeatInfo == null || e.Bpm != BeatInfo.Bpm)
             {
-                _writer.WriteSample(f);
+                BeatInfo = e;
+                BeatInfoChanged?.Invoke(this, e);
             }
         }
 
         public void Dispose()
         {
-            this._source.DataAvailable -= DataAvailable;
-            _writer.Flush();
-            _writer.Dispose();
-        }
-
-        protected virtual void OnBeatInfoChanged(BeatInfo e)
-        {
-            BeatInfoChanged?.Invoke(this, e);
         }
     }
 }

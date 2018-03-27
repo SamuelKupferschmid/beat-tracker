@@ -56,6 +56,10 @@
   <ItemGroup>
     <Compile Include="Readers\IWaveStreamReader.cs" />
     <Compile Include="Tracking\ISpectrumProvider.cs" />
+    <Compile Include="Tracking\FrequencyAnalyzer.cs" />
+    <Compile Include="Tracking\PulseAnalyzer.cs" />
+    <Compile Include="Tracking\FFTransformer.cs" />
+    <Compile Include="Utils\ComparableExtensions.cs" />
     <Compile Include="Writers\ConsoleWriter.cs" />
     <Compile Include="Writers\MidiMetronomeWriter.cs" />
     <Compile Include="Writers\SynchronizableWriter.cs" />

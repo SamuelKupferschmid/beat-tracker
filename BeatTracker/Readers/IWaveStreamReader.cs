@@ -5,14 +5,16 @@ namespace BeatTracker.Readers
 {
     public interface IWaveStreamReader
     {
-        event EventHandler<SampleArgs> DataAvailable;
+        void Start();
+
+        event EventHandler<WaveSample> DataAvailable;
 
         WaveFormat WaveFormat { get; }
     }
 
-    public class SampleArgs
+    public class WaveSample
     {
-        public SampleArgs(float[] data, int length)
+        public WaveSample(float[] data, int length)
         {
             Data = data;
             Length = length;
