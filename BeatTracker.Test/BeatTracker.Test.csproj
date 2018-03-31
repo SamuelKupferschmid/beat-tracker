@@ -70,6 +70,7 @@
     <Compile Include="Timers\TimerBenchmark.cs" />
     <Compile Include="Timers\TimerTests.cs" />
     <Compile Include="TrackerTests.cs" />
+    <Compile Include="Writers\SynchronizableWriterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -85,6 +86,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="data\ag1.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tracking\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

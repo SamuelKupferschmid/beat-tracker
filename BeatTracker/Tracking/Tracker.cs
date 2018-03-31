@@ -3,7 +3,7 @@ using BeatTracker.Readers;
 
 namespace BeatTracker.Tracking
 {
-    public partial class Tracker: IDisposable
+    public partial class Tracker : ITracker, IDisposable
     {
         private readonly IWaveStreamReader _source;
 
