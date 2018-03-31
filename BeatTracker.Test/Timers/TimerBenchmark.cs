@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BeatTracker.Test.Timer
+namespace BeatTracker.Test.Timers
 {
     public class TimerBenchmark
     {

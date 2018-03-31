@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace BeatTracker.Test.Timer
+namespace BeatTracker.Test.Timers
 {
     public class TimerTests
     {
