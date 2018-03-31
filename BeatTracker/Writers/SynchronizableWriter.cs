@@ -16,14 +16,6 @@ namespace BeatTracker.Writers
         public virtual void Start()
         {
             Tracker.BeatInfoChanged += TrackerOnBeatInfoChanged;
-            var timer = new Timer(500)
-            {
-                AutoReset = true,
-                Enabled = true,
-            };
-
-            timer.Elapsed += (sender, args) => OnPulse();
-            timer.Start();
         }
 
         private void TrackerOnBeatInfoChanged(object sender, BeatInfo beatInfo)

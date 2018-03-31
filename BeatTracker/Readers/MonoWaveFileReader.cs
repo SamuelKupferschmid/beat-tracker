@@ -34,26 +34,25 @@ namespace BeatTracker.Readers
             {
                 int length = _sampleProvider.Read(buffer, 0, size);
 
-                OnDataAvailable(new SampleArgs(buffer, length));
+                OnDataAvailable(new WaveSample(buffer, length));
             }
         }
 
-        private event EventHandler<SampleArgs> DataAvailable;
+        private event EventHandler<WaveSample> DataAvailable;
         public WaveFormat WaveFormat => _reader.WaveFormat;
 
-        event EventHandler<SampleArgs> IWaveStreamReader.DataAvailable
+        event EventHandler<WaveSample> IWaveStreamReader.DataAvailable
         {
 #pragma warning disable 4014
             add
             {
                 this.DataAvailable += value;
-                Start();
             }
 #pragma warning restore 4014
             remove { this.DataAvailable -= value; }
         }
 
-        protected virtual void OnDataAvailable(SampleArgs e)
+        protected virtual void OnDataAvailable(WaveSample e)
         {
             DataAvailable?.Invoke(this, e);
         }
