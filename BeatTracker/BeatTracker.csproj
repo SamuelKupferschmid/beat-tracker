@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Readers\IWaveStreamReader.cs" />
+    <Compile Include="Timers\MultimediaTimer.cs" />
+    <Compile Include="Timers\ITimer.cs" />
     <Compile Include="Tracking\ISpectrumProvider.cs" />
     <Compile Include="Writers\ConsoleWriter.cs" />
     <Compile Include="Writers\MidiMetronomeWriter.cs" />
@@ -73,6 +75,7 @@
     <Content Include="data\ag1.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Timers\Notes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

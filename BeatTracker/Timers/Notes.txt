@@ -1,0 +1,9 @@
+﻿Other timers:
+    // https://stackoverflow.com/questions/7137121/high-resolution-timer/45097518#45097518
+    // https://www.codeproject.com/Articles/2635/High-Performance-Timer-in-C
+    // https://www.codeproject.com/Articles/98346/Microsecond-and-Millisecond-NET-Timer
+
+Current timer:
+	// Source: https://github.com/mzboray/HighPrecisionTimer
+	// Further reading: https://msdn.microsoft.com/en-us/library/dd743609(v=vs.85).aspx
+	// Further reading #2: https://msdn.microsoft.com/en-us/library/windows/desktop/dn553408(v=vs.85).aspx
