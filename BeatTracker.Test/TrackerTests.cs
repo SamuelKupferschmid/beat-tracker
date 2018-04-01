@@ -11,10 +11,6 @@ namespace BeatTracker.Test
 {
     public class TrackerTests
     {
-        [Fact]
-        public void Test1()
-        {
-            new Tracker(null).ShouldNotBeNull();
-        }
+
     }
 }

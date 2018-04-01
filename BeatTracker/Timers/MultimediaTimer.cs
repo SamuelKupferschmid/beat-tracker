@@ -1,5 +1,4 @@
-﻿// Source: https://github.com/mzboray/HighPrecisionTimer
-namespace BeatTracker.Timers
+﻿namespace BeatTracker.Timers
 {
     using System;
     using System.Collections.Generic;
@@ -12,6 +11,7 @@ namespace BeatTracker.Timers
 
     /// <summary>
     /// A timer based on the multimedia timer API with 1ms precision.
+    /// Source: https://github.com/mzboray/HighPrecisionTimer
     /// </summary>
     public class MultimediaTimer : IDisposable, ITimer
     {

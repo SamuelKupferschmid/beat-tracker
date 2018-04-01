@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Threading;
+using BeatTracker.Timers;
 using BeatTracker.Tracking;
 using Sanford.Multimedia.Midi;
 
 namespace BeatTracker.Writers
 {
-    class MidiMetronomeWriter : SynchronizableWriter, IDisposable
+    class MidiMetronomeWriter : IPulseReceiver, IDisposable
     {
         protected readonly OutputDevice OutputDevice;
 
-        public MidiMetronomeWriter(Tracker tracker) : base(tracker)
+        public MidiMetronomeWriter()
         {
             OutputDevice = new OutputDevice(0);
         }
 
-
-        protected override void OnPulse()
+        public void OnPulse()
         {
             ChannelMessageBuilder builder = new ChannelMessageBuilder
             {

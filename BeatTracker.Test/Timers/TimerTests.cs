@@ -1,4 +1,5 @@
-﻿using BeatTracker.Timers;
+﻿using BeatTracker.Helpers;
+using BeatTracker.Timers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,34 +10,37 @@ using Xunit.Abstractions;
 
 namespace BeatTracker.Test.Timers
 {
+    [Collection("Synchronizing")]
     public class TimerTests
     {
-        private const float MinimumAccuracy = 0.995f;
+        private const float RequiredAccuracy = 0.95f;
 
         private readonly ITestOutputHelper _output;
 
         public TimerTests(ITestOutputHelper output)
         {
             _output = output ?? throw new ArgumentNullException(nameof(output));
+            
+            ProcessPriority.SetCurrentProcessPriorityToHigh();
         }
 
         [Fact]
         public void IsMultimediaTimerBenchmarkPassingRequirements()
         {
-            var timer = new MultimediaTimer();            
+            var timer = new MultimediaTimer();
             var benchmark = new TimerBenchmark(timer);
             benchmark.Run();
 
             Print(nameof(MultimediaTimer), benchmark);
 
-            Assert.True(benchmark.Accuracy > MinimumAccuracy);
+            Assert.True(benchmark.Accuracy > RequiredAccuracy);
         }
 
         private void Print(string name, TimerBenchmark benchmark)
         {
             var builder = new StringBuilder();
             builder.AppendLine($"'{name}' Benchmark Results:");
-            builder.AppendLine($"Accuracy (%): {benchmark.Accuracy:N2}");
+            builder.AppendLine($"Accuracy (%): {benchmark.Accuracy * 100:N3}");
             builder.AppendLine($"Average Deviation (s): {benchmark.AverageDeviation:N3}");
             builder.AppendLine($"Max Deviation (s): {benchmark.MaxDeviation:N3}");
             builder.AppendLine($"Min Deviation (s): {benchmark.MinDeviation:N3}");

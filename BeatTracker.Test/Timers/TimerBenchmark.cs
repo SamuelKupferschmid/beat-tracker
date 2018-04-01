@@ -12,10 +12,10 @@ namespace BeatTracker.Test.Timers
     public class TimerBenchmark
     {
         private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(1);
-        private static readonly TimeSpan StopAfter = TimeSpan.FromMinutes(1);
+        private static readonly TimeSpan StopAfter = TimeSpan.FromSeconds(60);
 
-        // Deviation Tolerance in Seconds: 10ms
-        private static readonly float Tolerance = 0.01f;
+        // Tolerance in Milliseconds: 5ms
+        public static readonly double Tolerance = 5;
 
         private readonly ITimer _timer;
 
@@ -36,13 +36,13 @@ namespace BeatTracker.Test.Timers
 
         public float MinMemoryUsed { get; private set; }
 
-        public float AverageDeviation { get; private set; }
+        public double AverageDeviation { get; private set; }
 
-        public float MaxDeviation { get; private set; }
+        public double MaxDeviation { get; private set; }
 
-        public float MinDeviation { get; private set; }
+        public double MinDeviation { get; private set; }
 
-        public float Accuracy { get; private set; }
+        public double Accuracy { get; private set; }
 
         public void Run()
         {
@@ -56,42 +56,49 @@ namespace BeatTracker.Test.Timers
             var cpuCounter = new PerformanceCounter("Process", "% Processor Time", processName);
             var memCounter = new PerformanceCounter("Process", "Working Set", processName);
 
-            var deviationMeasures = new List<float>();
+            var deviationMeasures = new List<double>();
             var cpuMeasures = new List<float>();
             var memMeasures = new List<float>();
 
             var random = new Random();
 
             int counter = 0;
-          
-            var startTime = Stopwatch.GetTimestamp();
-            var stopTime = startTime + (StopAfter.Ticks / TimeSpan.FromSeconds(1).Ticks) * Stopwatch.Frequency;
 
-            var ticksPerElapsedEvent = (Interval.Ticks / (float)TimeSpan.FromSeconds(1).Ticks) * Stopwatch.Frequency;
+            var stopTime = DateTime.Now + StopAfter;
+
+            var sw = Stopwatch.StartNew();
 
             _timer.Elapsed += (o, e) =>
-            {                
-                var actual = Stopwatch.GetTimestamp();
-                var expected = startTime + ((++counter) * ticksPerElapsedEvent);
+            {
+                var deviation = sw.ElapsedMilliseconds;
+                sw.Restart();
 
                 Task.Run(() =>
                 {
-                    if (actual < stopTime)
+                    if (DateTime.Now < stopTime)
                     {
-                        deviationMeasures.Add(Math.Abs(actual - expected) / Stopwatch.Frequency);
+                        lock (deviationMeasures)
+                        {
+                            deviationMeasures.Add(deviation);
+                        }
 
                         // According to 'https://msdn.microsoft.com/en-us/library/system.diagnostics.performancecounter.nextvalue.aspx'
                         // Query every 1s for accurate results.
 
-                        if (counter % (TimeSpan.FromSeconds(1).Ticks / Interval.Ticks) == 0)
+                        if (++counter % (TimeSpan.FromSeconds(1).Ticks / Interval.Ticks) == 0)
                         {
-                            cpuMeasures.Add(cpuCounter.NextValue() / Environment.ProcessorCount); // in percent, for e.g. 10.00%
-                            memMeasures.Add(memCounter.NextValue()); // in Bytes
+                            lock (cpuMeasures)
+                            {
+                                cpuMeasures.Add(cpuCounter.NextValue() / Environment.ProcessorCount); // in percent, for e.g. 10.00%
+                                memMeasures.Add(memCounter.NextValue()); // in Bytes
+                            }
                         }
                     }
                     else 
                     {
-                        _timer.Stop();
+                        if (_timer.IsRunning)
+                            _timer.Stop();
+
                         sync.Set();
                     }
                 });
