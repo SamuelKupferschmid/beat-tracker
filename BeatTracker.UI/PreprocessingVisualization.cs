@@ -41,7 +41,6 @@ namespace BeatTracker.UI
             thread = new Thread(tracker.Start);
 
             thread.Start();
-
         }
 
         private void StopApplication()

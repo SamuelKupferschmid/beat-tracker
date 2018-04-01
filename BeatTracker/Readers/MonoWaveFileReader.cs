@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using NAudio.Wave;
+using Timer = System.Timers.Timer;
 
 namespace BeatTracker.Readers
 {
@@ -9,7 +11,9 @@ namespace BeatTracker.Readers
         private readonly Stream _stream;
         private readonly WaveFileReader _reader;
         private readonly ISampleProvider _sampleProvider;
-        
+        private static readonly int _BufferSize = 1000;
+        private bool running = false;
+        readonly float[] _buffer = new float[_BufferSize];
 
         public MonoWaveFileReader(Stream stream)
         {
@@ -23,34 +27,58 @@ namespace BeatTracker.Readers
         {
         }
 
-
         public void Start()
         {
-            const int size = 1000;
+            Start(true);
+        }
 
-            float[] buffer = new float[size];
-            
-            while (_reader.Position < _reader.Length)
+        public void Start(bool simulatePlaybackspeed)
+        {
+            running = true;
+            if (simulatePlaybackspeed)
             {
-                int length = _sampleProvider.Read(buffer, 0, size);
+                var timer = new Timer();
 
-                OnDataAvailable(new WaveSample(buffer, length));
+                timer.Elapsed += (sender, args) =>
+                {
+                    if (running && _reader.Position < _reader.Length)
+                    {
+                        ReadNext();
+                    }
+                    else
+                    {
+                        timer.Stop();
+                        timer.Dispose();
+                    }
+                };
+
+                timer.AutoReset = true;
+                timer.Interval = 44100d / _BufferSize;
+                timer.Start();
+            }
+            else
+            {
+                while (running && _reader.Position < _reader.Length)
+                {
+                    ReadNext();
+                }
             }
         }
 
-        private event EventHandler<WaveSample> DataAvailable;
+        private void ReadNext()
+        {
+            int length = _sampleProvider.Read(_buffer, 0, _BufferSize);
+            OnDataAvailable(new WaveSample(_buffer, length));
+        }
+
+        public void Stop()
+        {
+            running = false;
+        }
+
         public WaveFormat WaveFormat => _reader.WaveFormat;
 
-        event EventHandler<WaveSample> IWaveStreamReader.DataAvailable
-        {
-#pragma warning disable 4014
-            add
-            {
-                this.DataAvailable += value;
-            }
-#pragma warning restore 4014
-            remove { this.DataAvailable -= value; }
-        }
+        public event EventHandler<WaveSample> DataAvailable;
 
         protected virtual void OnDataAvailable(WaveSample e)
         {
