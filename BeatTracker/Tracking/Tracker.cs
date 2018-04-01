@@ -57,5 +57,10 @@ namespace BeatTracker.Tracking
         public void Dispose()
         {
         }
+
+        public void Stop()
+        { 
+            _source.Stop();
+        }
     }
 }

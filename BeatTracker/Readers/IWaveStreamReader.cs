@@ -7,6 +7,8 @@ namespace BeatTracker.Readers
     {
         void Start();
 
+        void Stop();
+
         event EventHandler<WaveSample> DataAvailable;
 
         WaveFormat WaveFormat { get; }

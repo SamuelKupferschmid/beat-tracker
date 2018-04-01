@@ -16,11 +16,7 @@ namespace BeatTracker.UI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            var spectrum = new SpectrumVisualization(new DumySpectrumProvider());
-            spectrum.Show();
-
-            Application.Run();
+            Application.Run(new PreprocessingVisualization());
         }
     }
 }
