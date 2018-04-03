@@ -21,8 +21,7 @@
                         "High resolution clock isn't available.");
                 }
 
-                long filetime;
-                GetSystemTimePreciseAsFileTime(out filetime);
+                GetSystemTimePreciseAsFileTime(out long filetime);
 
                 return DateTime.FromFileTime(filetime);
             }

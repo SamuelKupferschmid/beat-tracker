@@ -130,7 +130,7 @@ namespace BeatTracker.Test.Timers
                 MaxDeviation = deviationMeasures.Max();
                 MinDeviation = deviationMeasures.Min();
 
-                Accuracy = deviationMeasures.Where(d => d < Tolerance).Count() / (float)deviationMeasures.Count;
+                Accuracy = deviationMeasures.Count(d => d < Tolerance) / (float)deviationMeasures.Count;
             }
         }
     }
