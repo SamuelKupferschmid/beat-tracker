@@ -14,8 +14,8 @@ namespace BeatTracker.UI
 {
     class PreprocessingVisualization : ApplicationContext
     {
-        public Thread thread;
-        private Tracker tracker;
+        private readonly Thread thread;
+        private readonly Tracker tracker;
 
         public PreprocessingVisualization()
         {
@@ -27,8 +27,7 @@ namespace BeatTracker.UI
 
             foreach (var inst in SpectrumLogger.Instances)
             {
-                var form = new SpectrumVisualization();
-                form.Text = inst.Name;
+                var form = new SpectrumVisualization {Text = inst.Name};
                 inst.OnFrame += form.AddFrame;
                 form.Show();
                 form.FormClosing += (sender, args) =>

@@ -14,6 +14,7 @@ namespace BeatTracker
     {
         public static Tracker Create()
         {
+            // MonoWaveFileReader reader = new MonoWaveFileReader("data/220_440_3520_sine.wav");
             MonoWaveFileReader reader = new MonoWaveFileReader("data/ag1.wav");
 
             var tracker = new Tracker(reader);
