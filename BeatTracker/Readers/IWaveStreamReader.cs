@@ -15,7 +15,7 @@ namespace BeatTracker.Readers
     }
 
     public class WaveSample
-    {
+    {        
         public WaveSample(float[] data, int length)
         {
             Data = data;

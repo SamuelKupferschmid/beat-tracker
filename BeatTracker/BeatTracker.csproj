@@ -60,6 +60,7 @@
     <Compile Include="Helpers\ConcurrentSlidingEnumerable.cs" />
     <Compile Include="Helpers\ProcessPriority.cs" />
     <Compile Include="Readers\IWaveStreamReader.cs" />
+    <Compile Include="Readers\WaveInputDeviceReader.cs" />
     <Compile Include="Timers\HighResolutionDateTime.cs" />
     <Compile Include="Timers\IDateTime.cs" />
     <Compile Include="Timers\MultimediaTimer.cs" />
