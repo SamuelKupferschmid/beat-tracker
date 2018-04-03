@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using BeatTracker.Readers;
+using BeatTracker.Timers;
 using MathNet.Numerics.IntegralTransforms;
 using MathNet.Numerics.Random;
 using NAudio.Utils;
@@ -10,15 +11,17 @@ using NAudio.Wave;
 
 namespace BeatTracker.Tracking
 {
-    public partial class Tracker : IDisposable
+    public partial class Tracker : ITracker, IDisposable
     {
         private readonly IWaveStreamReader _source;
+        private readonly IDateTime _dateTime;
 
-        public Tracker(IWaveStreamReader source)
+        public Tracker(IWaveStreamReader source, IDateTime dateTime)
         {
-            _source = source;
+            _source = source ?? throw new ArgumentNullException(nameof(source));
+            _dateTime = dateTime ?? throw new ArgumentNullException(nameof(dateTime));
 
-            FrequencyAnalyzer = new FrequencyAnalyzer(source);
+            FrequencyAnalyzer = new FrequencyAnalyzer(_source);
             PulseAnalyzer = new PulseAnalyzer();
 
             FrequencyAnalyzer.FrameAvailable += (sender, frameValue) => PulseAnalyzer.AddFrame(frameValue);
@@ -52,6 +55,11 @@ namespace BeatTracker.Tracking
                 BeatInfo = e;
                 BeatInfoChanged?.Invoke(this, e);
             }
+        }
+
+        private void DataAvailable(object sender, SampleArgs e)
+        {
+            OnBeatInfoChanged(new BeatInfo(42, _dateTime.Now));
         }
 
         public void Dispose()
