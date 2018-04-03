@@ -8,6 +8,7 @@ using BeatTracker.Tracking;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace BeatTracker.Writers
 {
@@ -96,12 +97,11 @@ namespace BeatTracker.Writers
 
             if (offset < Resolution)
             {
-                var lastOnPulseCall = _dateTime.Now;
+                var sw = Stopwatch.StartNew();
 
                 _pulseReceiver.OnPulse();
 
-                var onPulseCallTime = (_dateTime.Now - lastOnPulseCall).TotalMilliseconds;
-                _recentOnPulseCallTimes.Push(onPulseCallTime);
+                _recentOnPulseCallTimes.Push(sw.ElapsedMilliseconds);
             }
         }
     }

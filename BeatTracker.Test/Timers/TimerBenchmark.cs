@@ -11,18 +11,35 @@ namespace BeatTracker.Test.Timers
 {
     public class TimerBenchmark
     {
-        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(1);
-        private static readonly TimeSpan StopAfter = TimeSpan.FromSeconds(60);
-
-        // Tolerance in Milliseconds: 5ms
-        public static readonly double Tolerance = 5;
-
         private readonly ITimer _timer;
+        private readonly TimeSpan _interval;
+        private readonly TimeSpan _runTime;
 
-        public TimerBenchmark(ITimer timer)
+        // Tolerance in [ms]
+        private readonly double _toleranceInMilliseconds;
+
+        public TimerBenchmark(ITimer timer, TimeSpan interval, TimeSpan runTime, double toleranceInMilliseconds)
         {
             _timer = timer ?? throw new ArgumentNullException(nameof(timer));
+
+            if (interval.Ticks <= 0)
+                throw new ArgumentException(nameof(interval));
+            _interval = interval;
+            
+            if (runTime.Ticks <= 0)
+                throw new ArgumentException(nameof(runTime));
+            _runTime = runTime;
+
+            if (toleranceInMilliseconds <= 0)
+                throw new ArgumentException(nameof(toleranceInMilliseconds));
+            _toleranceInMilliseconds = toleranceInMilliseconds;
         }
+
+        public TimeSpan Interval => _interval;
+
+        public TimeSpan RunTime => _runTime;
+
+        public double ToleranceInMilliseconds => _toleranceInMilliseconds;
 
         public float AverageCpuUsed { get; private set; }
 
@@ -64,14 +81,19 @@ namespace BeatTracker.Test.Timers
 
             int counter = 0;
 
-            var stopTime = DateTime.Now + StopAfter;
+            var stopTime = DateTime.Now + _runTime;
 
             var sw = Stopwatch.StartNew();
 
+            var last = TimeSpan.Zero;
+
+            var runningSeconds = 0;
+
             _timer.Elapsed += (o, e) =>
             {
-                var deviation = sw.ElapsedMilliseconds;
-                sw.Restart();
+                var elapsed = sw.Elapsed;
+                var deviation = Math.Abs((elapsed - last).TotalMilliseconds - Interval.TotalMilliseconds);
+                last = elapsed;
 
                 Task.Run(() =>
                 {
@@ -82,15 +104,20 @@ namespace BeatTracker.Test.Timers
                             deviationMeasures.Add(deviation);
                         }
 
+                        if (deviation > _toleranceInMilliseconds)
+                            System.Diagnostics.Debug.Print($"Deviation (ms) exceeds tolerance: {deviation:F3}ms.");
+
                         // According to 'https://msdn.microsoft.com/en-us/library/system.diagnostics.performancecounter.nextvalue.aspx'
                         // Query every 1s for accurate results.
 
-                        if (++counter % (TimeSpan.FromSeconds(1).Ticks / Interval.Ticks) == 0)
+                        if (sw.Elapsed.Seconds > runningSeconds)
                         {
                             lock (cpuMeasures)
                             {
                                 cpuMeasures.Add(cpuCounter.NextValue() / Environment.ProcessorCount); // in percent, for e.g. 10.00%
                                 memMeasures.Add(memCounter.NextValue()); // in Bytes
+
+                                ++runningSeconds;
                             }
                         }
                     }
@@ -104,7 +131,7 @@ namespace BeatTracker.Test.Timers
                 });
             };
 
-            _timer.StartNew(Interval);
+            _timer.StartNew(_interval);
 
             sync.WaitOne();
 
@@ -130,7 +157,7 @@ namespace BeatTracker.Test.Timers
                 MaxDeviation = deviationMeasures.Max();
                 MinDeviation = deviationMeasures.Min();
 
-                Accuracy = deviationMeasures.Count(d => d < Tolerance) / (float)deviationMeasures.Count;
+                Accuracy = deviationMeasures.Count(d => d < _toleranceInMilliseconds) / (double)deviationMeasures.Count;
             }
         }
     }

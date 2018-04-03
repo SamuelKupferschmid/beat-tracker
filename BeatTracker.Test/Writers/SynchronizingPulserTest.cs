@@ -19,6 +19,8 @@ namespace BeatTracker.Test.Writers
     [Collection("Synchronizing")]
     public class SynchronizingPulserTest
     {
+        private const double ToleranceInMilliseconds = 2.5d;
+
         private readonly ITestOutputHelper _output;
 
         public SynchronizingPulserTest(ITestOutputHelper output)
@@ -104,7 +106,7 @@ namespace BeatTracker.Test.Writers
 
             A.CallTo(() => pulseReceiver.OnPulse()).Invokes(call =>
             {
-                measuredOffset = sw.ElapsedMilliseconds;
+                measuredOffset = sw.Elapsed.TotalMilliseconds;
                 isRunning = false;
             });
             
@@ -117,9 +119,9 @@ namespace BeatTracker.Test.Writers
 
             var deviation = Math.Abs(measuredOffset - writer.Offset.TotalMilliseconds);
 
-            _output.WriteLine($"Deviation: {deviation:F}ms.");
+            _output.WriteLine($"Deviation: {deviation:F3}ms.");
 
-            Assert.True(deviation < TimerBenchmark.Tolerance);
+            Assert.True(deviation < ToleranceInMilliseconds);
         }
 
         [Fact]
@@ -133,7 +135,7 @@ namespace BeatTracker.Test.Writers
 
             double bpm = 1000;
 
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, DateTime.Now));
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
 
             var simulatedWorkTimeSpan = TimeSpan.FromMilliseconds(50);
 
@@ -145,7 +147,11 @@ namespace BeatTracker.Test.Writers
                 timer.Elapsed += Raise.WithEmpty();
             }
 
-            Assert.True(Math.Abs((simulatedWorkTimeSpan - writer.InternalOffset).TotalMilliseconds) < TimerBenchmark.Tolerance);
+            var deviation = Math.Abs((simulatedWorkTimeSpan - writer.InternalOffset).TotalMilliseconds);
+
+            _output.WriteLine($"Deviation: {deviation:F3}ms.");
+
+            Assert.True(deviation < ToleranceInMilliseconds);
         }
 
         [Fact]
@@ -160,7 +166,7 @@ namespace BeatTracker.Test.Writers
             var random = new Random();
             double bpm = 1000;
 
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, DateTime.Now));
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
 
             var simulatedWorkTimeSpan = TimeSpan.FromMilliseconds(50);
 
@@ -183,7 +189,11 @@ namespace BeatTracker.Test.Writers
                 timer.Elapsed += Raise.WithEmpty();
             }
 
-            Assert.True(Math.Abs((simulatedWorkTimeSpan - writer.InternalOffset).TotalMilliseconds) < TimerBenchmark.Tolerance);
+            var deviation = Math.Abs((simulatedWorkTimeSpan - writer.InternalOffset).TotalMilliseconds);
+
+            _output.WriteLine($"Deviation: {deviation:F3}ms.");
+
+            Assert.True(deviation < ToleranceInMilliseconds);
         }
 
         [Fact]
@@ -197,7 +207,7 @@ namespace BeatTracker.Test.Writers
 
             double bpm = 1000;
 
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, DateTime.Now));
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
 
             // Simulate when work takes longer than bpm.
             var simulatedWorkTimeSpan = TimeSpan.FromMinutes(1 / bpm) + TimeSpan.FromMilliseconds(75);
@@ -206,13 +216,12 @@ namespace BeatTracker.Test.Writers
             {
                 // Findings:
 
-                // When OnPulse() implementation is 'non-blocking' or takes not a lot of time, then this Test will pass.
+                // 1. When OnPulse() implementation is 'non-blocking' or takes not a lot of time, then this Test will pass.
                 // For e.g. implementation with 'await Task.Delay(simulatedWorkTimeSpan);'
                 await Task.Delay(simulatedWorkTimeSpan);
 
-                // When OnPulse() implementation is 'blocking' and takes a lot of time (more than 'TimeSpan.FromMinutes(1 / bpm)'), then this Test will fail.
+                // 2. When OnPulse() implementation is 'blocking' and takes a lot of time (more than 'TimeSpan.FromMinutes(1 / bpm)'), then this Test will fail.
                 // For e.g. implementation with 'Thread.Sleep(simulatedWorkTimeSpan);'.
-                
                 // Thread.Sleep(simulatedWorkTimeSpan);
             });
 
