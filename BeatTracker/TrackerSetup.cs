@@ -14,38 +14,18 @@ namespace BeatTracker
 {
     public class TrackerSetup
     {
-        public static Tracker Create()
+        public static Tracker Create(IWaveStreamReader reader, IPulseReceiver writer)
         {
-            MonoWaveFileReader reader = new MonoWaveFileReader("data/ag1.wav");
+            // ToDo: Move following line to a better place (for e.g. something like App.Init())
+            ProcessPriority.SetCurrentProcessPriorityToHigh();
 
-            var dateTime = new HighResolutionDateTime();
+            var tracker = new Tracker(reader, new HighResolutionDateTime());
 
-            var tracker = new Tracker(reader, dateTime);
+            // Note: Not happy with "hidden" pulser
+            var pulser = new SynchronizingPulser(tracker, new MultimediaTimer(), new HighResolutionDateTime(), writer);
+            pulser.Start();
 
             return tracker;
         }
-
-        //static void Main(string[] args)
-        //{
-        //    ProcessPriority.SetCurrentProcessPriorityToHigh();
-
-        //    MonoWaveFileReader reader = new MonoWaveFileReader("data/ag1.wav");
-
-        //    var timer = new MultimediaTimer();
-        //    var dateTime = new HighResolutionDateTime();
-
-        //    var tracker = new Tracker(reader, dateTime);
-
-        //    var output = new MidiMetronomeWriter();
-
-        //    var pulser = new SynchronizingPulser(tracker, timer, dateTime, output);
-
-
-        //    // var output = new ConsoleWriter(tracker);
-
-        //    tracker.Start();
-
-        //    Console.ReadLine();
-        //}
     }
 }

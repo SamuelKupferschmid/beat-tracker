@@ -45,7 +45,10 @@ namespace BeatTracker.Tracking
         {
             var bpm = candidates.OrderByDescending(c => c.confidence).First().bpm;
 
-            OnBeatInfoChanged(new BeatInfo(bpm));
+            // ToDo: Calculate 'OccursAt' (DateTime)?
+            var occursAt = _dateTime.Now;
+
+            OnBeatInfoChanged(new BeatInfo(bpm, occursAt));
         }
 
         protected virtual void OnBeatInfoChanged(BeatInfo e)
@@ -55,11 +58,6 @@ namespace BeatTracker.Tracking
                 BeatInfo = e;
                 BeatInfoChanged?.Invoke(this, e);
             }
-        }
-
-        private void DataAvailable(object sender, SampleArgs e)
-        {
-            OnBeatInfoChanged(new BeatInfo(42, _dateTime.Now));
         }
 
         public void Dispose()

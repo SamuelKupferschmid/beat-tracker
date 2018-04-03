@@ -64,7 +64,6 @@
     <Compile Include="Timers\IDateTime.cs" />
     <Compile Include="Timers\MultimediaTimer.cs" />
     <Compile Include="Timers\ITimer.cs" />
-    <Compile Include="Tracking\ISpectrumProvider.cs" />
     <Compile Include="TrackerSetup.cs" />
     <Compile Include="Tracking\FrequencyAnalyzer.cs" />
     <Compile Include="Tracking\PulseAnalyzer.cs" />

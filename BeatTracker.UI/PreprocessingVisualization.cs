@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BeatTracker.Readers;
+using BeatTracker.Timers;
 using BeatTracker.Tracking;
 using BeatTracker.Utils;
 using BeatTracker.Writers;
@@ -19,11 +20,10 @@ namespace BeatTracker.UI
 
         public PreprocessingVisualization()
         {
-            tracker = TrackerSetup.Create();
-            // var output = new MidiMetronomeOutput(tracker);
-            var output = new ConsoleWriter(tracker);
+            var reader = new MonoWaveFileReader("data/ag1.wav");
+            var writer = new ConsoleWriter();
 
-            output.Start();
+            tracker = TrackerSetup.Create(reader, writer);
 
             foreach (var inst in SpectrumLogger.Instances)
             {

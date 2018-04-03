@@ -12,14 +12,19 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace BeatTracker.Test.Writers
 {
     [Collection("Synchronizing")]
     public class SynchronizingPulserTest
     {
-        public SynchronizingPulserTest()
+        private readonly ITestOutputHelper _output;
+
+        public SynchronizingPulserTest(ITestOutputHelper output)
         {
+            _output = output ?? throw new ArgumentNullException(nameof(output));
+
             ProcessPriority.SetCurrentProcessPriorityToHigh();
         }
 
@@ -99,11 +104,8 @@ namespace BeatTracker.Test.Writers
 
             A.CallTo(() => pulseReceiver.OnPulse()).Invokes(call =>
             {
-                if (isRunning)
-                {
-                    measuredOffset = sw.ElapsedMilliseconds;
-                    isRunning = false;
-                }
+                measuredOffset = sw.ElapsedMilliseconds;
+                isRunning = false;
             });
             
             tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
@@ -113,7 +115,11 @@ namespace BeatTracker.Test.Writers
             while (isRunning)
                 timer.Elapsed += Raise.WithEmpty();
 
-            Assert.True(Math.Abs(measuredOffset - writer.Offset.TotalMilliseconds) < TimerBenchmark.Tolerance);
+            var deviation = Math.Abs(measuredOffset - writer.Offset.TotalMilliseconds);
+
+            _output.WriteLine($"Deviation: {deviation:F}ms.");
+
+            Assert.True(deviation < TimerBenchmark.Tolerance);
         }
 
         [Fact]
