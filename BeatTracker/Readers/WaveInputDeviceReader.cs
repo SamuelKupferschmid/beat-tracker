@@ -9,20 +9,28 @@ namespace BeatTracker.Readers
 {
     public class WaveInputDeviceReader : IWaveStreamReader, IDisposable
     {
-        private static readonly int SampleBufferSize = 100;
+        private static readonly int SampleBufferSize = 1000;
         
-        private readonly WaveIn _device;
+        private readonly WaveInEvent _device;
         private readonly float[] _sampleBuffer;
         private readonly BufferedWaveProvider _bufferedWaveProvider;
         private readonly ISampleProvider _sampleProvider;
 
+        /// <summary>
+        /// Creates a reader with the standard specifications(PCM 44.1Khz stereo 16 bit)
+        /// </summary>
+        /// <param name="deviceId"></param>
+        public WaveInputDeviceReader(int deviceId)
+            : this(deviceId, new WaveFormat())
+        {
+        }
 
         public WaveInputDeviceReader(int deviceId, WaveFormat waveFormat)
         {
             if (deviceId < 0 || deviceId > WaveIn.DeviceCount - 1)
                 throw new ArgumentException(nameof(deviceId));
 
-            _device = new WaveIn();
+            _device = new WaveInEvent();
             _device.DeviceNumber = deviceId;
             _device.WaveFormat = waveFormat ?? throw new ArgumentNullException(nameof(waveFormat));
 
