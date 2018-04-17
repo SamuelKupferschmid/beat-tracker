@@ -21,18 +21,18 @@ namespace BeatTracker.Tracking
         private readonly IWaveStreamReader _streamReader;
         private readonly FFTransformer _transformer;
         private readonly SpectrumLogger _inputLogger = SpectrumLogger.Create("FrequencyAnalyzer - Input");
-        //private readonly SpectrumLogger _outputLogger = SpectrumLogger.Create("FrequencyAnalyzer - Novelty Curve");
+        private readonly SpectrumLogger _outputLogger = SpectrumLogger.Create("FrequencyAnalyzer - Novelty Curve");
 
         public FrequencyAnalyzer(IWaveStreamReader streamReader)
         {
             _streamReader = streamReader;
-            _transformer = new FFTransformer(500);
+            _transformer = new FFTransformer(200);
             _transformer.FrameAvailable += _transformer_FrameAvailable;
             _streamReader.DataAvailable += _streamReader_DataAvailable;
             _rawFile = File.OpenWrite("C:\\tmp\\novelty.dat");
         }
 
-        public event EventHandler<float> FrameAvailable; 
+        public event EventHandler<float> FrameAvailable;
 
         private void _streamReader_DataAvailable(object sender, WaveSamples e)
         {
@@ -42,13 +42,32 @@ namespace BeatTracker.Tracking
         private readonly Queue<double> buffer = new Queue<double>(8);
         private FileStream _rawFile;
 
+        private int counter = 0;
+        private float smoothedValue = 0;
+        private float smoothWindow = 50;
+
         private void _transformer_FrameAvailable(object sender, float[] e)
         {
-            
-                _inputLogger.AddSampe(e);
+            _inputLogger.AddSampe(e);
 
-                
-                FrameAvailable?.Invoke(this, e.Select(Math.Abs).Sum());
+            var noveltyCurve = e.Select(Math.Abs).Sum();
+
+            counter++;
+            smoothedValue += noveltyCurve / smoothWindow;
+
+            if (counter > smoothWindow)
+            {
+                smoothedValue -= smoothedValue / smoothWindow;
+            }
+
+            noveltyCurve -= smoothedValue;
+
+            var log = new float[100];
+
+            log[(int)noveltyCurve.Clamp(0, float.MaxValue)] = 1;
+            _outputLogger.AddSampe(log);
+
+            FrameAvailable?.Invoke(this, noveltyCurve);
         }
     }
 }
