@@ -6,16 +6,17 @@ using Sanford.Multimedia.Midi;
 
 namespace BeatTracker.Writers
 {
-    class MidiMetronomeWriter : IPulseReceiver, IDisposable
+    public class MidiMetronomeWriter : SynchronizingWriter, IDisposable
     {
         protected readonly OutputDevice OutputDevice;
 
-        public MidiMetronomeWriter()
+        public MidiMetronomeWriter(ITracker tracker, int deviceId)
+            : base(tracker)
         {
-            OutputDevice = new OutputDevice(0);
+            OutputDevice = new OutputDevice(deviceId);
         }
 
-        public void OnPulse()
+        protected override void OnPulse()
         {
             ChannelMessageBuilder builder = new ChannelMessageBuilder
             {
@@ -24,18 +25,8 @@ namespace BeatTracker.Writers
                 Data1 = 37,
                 Data2 = 127
             };
-
-
+            
             builder.Build();
-
-            OutputDevice.Send(builder.Result);
-
-            Thread.Sleep(1000);
-
-            builder.Command = ChannelCommand.NoteOff;
-            builder.Data2 = 0;
-            builder.Build();
-
 
             OutputDevice.Send(builder.Result);
         }

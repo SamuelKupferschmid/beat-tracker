@@ -17,7 +17,7 @@ namespace BeatTracker.Readers
         private readonly ISampleProvider _sampleProvider;
 
         /// <summary>
-        /// Creates a reader with the standard specifications(PCM 44.1Khz stereo 16 bit)
+        /// Creates a reader with the standard specifications (PCM 44.1Khz stereo 16 bit)
         /// </summary>
         /// <param name="deviceId"></param>
         public WaveInputDeviceReader(int deviceId)
@@ -34,14 +34,10 @@ namespace BeatTracker.Readers
             _device.DeviceNumber = deviceId;
             _device.WaveFormat = waveFormat ?? throw new ArgumentNullException(nameof(waveFormat));
 
-            if (waveFormat.BitsPerSample == 0
-                || waveFormat.BitsPerSample % 8 != 0)
-                throw new ArgumentException("BitsPerSample must be greater than 0 and a factor of 8");
-
             _sampleBuffer = new float[SampleBufferSize];
 
             _bufferedWaveProvider = new BufferedWaveProvider(_device.WaveFormat);
-            _bufferedWaveProvider.BufferLength = SampleBufferSize * waveFormat.BitsPerSample / 8;
+            _bufferedWaveProvider.BufferLength = SampleBufferSize * waveFormat.BlockAlign;
             _bufferedWaveProvider.DiscardOnBufferOverflow = false;
             
             _sampleProvider = _bufferedWaveProvider.ToSampleProvider();
@@ -70,6 +66,7 @@ namespace BeatTracker.Readers
                 }
 
                 bytesToProcess -= length;
+                bytesProcessed += length;
             }
         }
 

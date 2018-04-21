@@ -21,9 +21,8 @@ namespace BeatTracker.UI
         public PreprocessingVisualization()
         {
             var reader = new MonoWaveFileReader("data/ag1.wav");
-            var writer = new ConsoleWriter();
 
-            tracker = TrackerSetup.Create(reader, writer);
+            tracker = TrackerSetup.CreateWith<ConsoleWriter>(reader);
 
             foreach (var inst in SpectrumLogger.Instances)
             {

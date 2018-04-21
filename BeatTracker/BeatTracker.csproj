@@ -74,13 +74,13 @@
     <Compile Include="Utils\SpectrumLogger.cs" />
     <Compile Include="Tracking\ITracker.cs" />
     <Compile Include="Writers\ConsoleWriter.cs" />
-    <Compile Include="Writers\IPulseReceiver.cs" />
     <Compile Include="Writers\MidiMetronomeWriter.cs" />
-    <Compile Include="Writers\SynchronizingPulser.cs" />
+    <Compile Include="Writers\SynchronizingWriter.cs" />
     <Compile Include="Tracking\BeatInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tracking\Tracker.cs" />
     <Compile Include="Readers\MonoWaveFileReader.cs" />
+    <Compile Include="Writers\WaveOutputDeviceWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -90,6 +90,13 @@
     <Content Include="data\ag1.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\Boom-Kick.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\Click.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\Notes.txt" />
     <None Include="Timers\Notes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

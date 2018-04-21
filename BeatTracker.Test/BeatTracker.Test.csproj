@@ -72,7 +72,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timers\TimerBenchmark.cs" />
     <Compile Include="Timers\TimerTests.cs" />
-    <Compile Include="Writers\SynchronizingPulserTest.cs" />
+    <Compile Include="Writers\MockSynchronizingWriter.cs" />
+    <Compile Include="Writers\SynchronizingWriterTest.cs" />
     <Compile Include="Tracking\FFTransformerTest.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -28,7 +28,7 @@ namespace BeatTracker.Tracking
             //TODO implement low pulse extraction
             PulseExtracted?.Invoke(this, new[]
             {
-                (60f, 0.8f)
+                (60f, 1f)
             });
         }
 

@@ -4,9 +4,14 @@ using BeatTracker.Tracking;
 
 namespace BeatTracker.Writers
 {
-    public class ConsoleWriter : IPulseReceiver
+    public class ConsoleWriter : SynchronizingWriter
     {
-        public void OnPulse()
+        public ConsoleWriter(ITracker tracker)
+            : base(tracker)
+        {
+        }
+
+        protected override void OnPulse()
         {
             Console.WriteLine("foo..");
         }
