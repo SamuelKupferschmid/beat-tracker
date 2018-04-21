@@ -29,7 +29,7 @@ namespace BeatTracker.Readers
 
         public void Start()
         {
-            Start(true);
+            Start(false);
         }
 
         public void Start(bool simulatePlaybackspeed)
@@ -68,7 +68,7 @@ namespace BeatTracker.Readers
         private void ReadNext()
         {
             int length = _sampleProvider.Read(_buffer, 0, _BufferSize);
-            OnDataAvailable(new WaveSample(_buffer, length));
+            OnDataAvailable(new WaveSamples(_buffer, length));
         }
 
         public void Stop()
@@ -78,9 +78,9 @@ namespace BeatTracker.Readers
 
         public WaveFormat WaveFormat => _reader.WaveFormat;
 
-        public event EventHandler<WaveSample> DataAvailable;
+        public event EventHandler<WaveSamples> DataAvailable;
 
-        protected virtual void OnDataAvailable(WaveSample e)
+        protected virtual void OnDataAvailable(WaveSamples e)
         {
             DataAvailable?.Invoke(this, e);
         }

@@ -9,14 +9,14 @@ namespace BeatTracker.Readers
 
         void Stop();
 
-        event EventHandler<WaveSample> DataAvailable;
+        event EventHandler<WaveSamples> DataAvailable;
 
         WaveFormat WaveFormat { get; }
     }
 
-    public class WaveSample
+    public class WaveSamples
     {
-        public WaveSample(float[] data, int length)
+        public WaveSamples(float[] data, int length)
         {
             Data = data;
             Length = length;

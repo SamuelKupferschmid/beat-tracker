@@ -18,7 +18,10 @@ namespace BeatTracker
         {
             // ToDo: Move following line to a better place (for e.g. something like App.Init())
             ProcessPriority.SetCurrentProcessPriorityToHigh();
-
+                      
+            // MonoWaveFileReader reader = new MonoWaveFileReader("data/220_440_3520_sine.wav");
+            MonoWaveFileReader reader = new MonoWaveFileReader("data/ag1.wav");
+          
             var tracker = new Tracker(reader, new HighResolutionDateTime());
 
             // Note: Not happy with "hidden" pulser

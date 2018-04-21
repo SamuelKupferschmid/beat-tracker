@@ -98,7 +98,7 @@ namespace BeatTracker.UI
 
                     for (int i = 0; i < next.Length; i++)
                     {
-                        _bitmap.SetPixel(_offset, i, GetColor(next[i]));
+                        _bitmap.SetPixel(_offset, next.Length - i - 1, GetColor(next[i]));
                     }
 
                     _offset++;
