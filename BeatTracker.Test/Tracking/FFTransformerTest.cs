@@ -26,12 +26,12 @@ namespace BeatTracker.Test.Tracking
             testee.FrameAvailable += (sender, floats) => count++;
 
             var data = Enumerable.Repeat(1f, 40).ToArray();
-            var sample = new WaveSample(data, data.Length);
+            var sample = new WaveSamples(data, data.Length);
 
-            testee.AddSample(sample);
-            testee.AddSample(sample);
+            testee.AddSamples(sample);
+            testee.AddSamples(sample);
             count.ShouldBe(0);
-            testee.AddSample(sample);
+            testee.AddSamples(sample);
             count.ShouldBe(1);
         }
 
@@ -54,7 +54,7 @@ namespace BeatTracker.Test.Tracking
             var transformer = new FFTransformer(10000);
             float[] result = null;
             transformer.FrameAvailable += (sender, floats) => result = floats;
-            transformer.AddSample(new WaveSample(data, data.Length));
+            transformer.AddSamples(new WaveSamples(data, data.Length));
 
             result.ShouldNotBeNull();
             Math.Abs(result[freq0]).ShouldBeGreaterThan(0f);
@@ -72,7 +72,7 @@ namespace BeatTracker.Test.Tracking
             transformer.EqualizerFunc = i => 0;
 
             transformer.FrameAvailable += (sender, floats) => result.AddRange(floats);
-            transformer.AddSample(new WaveSample(data, data.Length));
+            transformer.AddSamples(new WaveSamples(data, data.Length));
 
             result.AllItemsSatisfy(v => v.ShouldBe(0f));
 

@@ -34,21 +34,21 @@ namespace BeatTracker.Tracking
             }
         }
 
-        public void AddSample(WaveSample sample)
+        public void AddSamples(WaveSamples samples)
         {
             var sourcePos = 0;
-            while (sourcePos < sample.Length)
+            while (sourcePos < samples.Length)
             {
                 var space = _buffer.Length - _bufferPosition;
-                if (space > sample.Length - sourcePos)
+                if (space > samples.Length - sourcePos)
                 {
-                    Array.Copy(sample.Data, 0, _buffer, _bufferPosition, sample.Length - sourcePos);
-                    sourcePos += sample.Length;
-                    _bufferPosition += sample.Length;
+                    Array.Copy(samples.Data, 0, _buffer, _bufferPosition, samples.Length - sourcePos);
+                    sourcePos += samples.Length;
+                    _bufferPosition += samples.Length;
                 }
                 else
                 {
-                    Array.Copy(sample.Data, sourcePos, _buffer, _bufferPosition, space);
+                    Array.Copy(samples.Data, sourcePos, _buffer, _bufferPosition, space);
                     Tranform(_buffer);
 
                     _buffer = new float[_bins * 2];

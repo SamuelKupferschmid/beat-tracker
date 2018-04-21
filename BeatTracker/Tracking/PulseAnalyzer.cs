@@ -35,7 +35,7 @@ namespace BeatTracker.Tracking
         public void AddFrame(float f)
         {
             _buffer[0] = f;
-            _transformer.AddSample(new WaveSample(_buffer,1));
+            _transformer.AddSamples(new WaveSamples(_buffer,1));
         }
     }
 }

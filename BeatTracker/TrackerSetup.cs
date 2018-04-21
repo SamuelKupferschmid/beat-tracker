@@ -18,7 +18,11 @@ namespace BeatTracker
         {
             // ToDo: Move following line to a better place (for e.g. something like App.Init())
             ProcessPriority.SetCurrentProcessPriorityToHigh();
-
+          
+            // ToDo: Move following lines
+            // MonoWaveFileReader reader = new MonoWaveFileReader("data/220_440_3520_sine.wav");
+            // MonoWaveFileReader reader = new MonoWaveFileReader("data/ag1.wav");
+  
             var tracker = new Tracker(reader);
             var writer = Activator.CreateInstance(typeof(TWriter), tracker);
 
