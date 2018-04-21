@@ -77,10 +77,6 @@ namespace BeatTracker.Test.Timers
             var cpuMeasures = new List<float>();
             var memMeasures = new List<float>();
 
-            var random = new Random();
-
-            int counter = 0;
-
             var stopTime = DateTime.Now + _runTime;
 
             var sw = Stopwatch.StartNew();

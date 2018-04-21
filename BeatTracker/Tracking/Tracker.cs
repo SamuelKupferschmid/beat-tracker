@@ -16,6 +16,11 @@ namespace BeatTracker.Tracking
         private readonly IWaveStreamReader _source;
         private readonly IDateTime _dateTime;
 
+        public Tracker(IWaveStreamReader source)
+            : this(source, new HighResolutionDateTime())
+        {
+        }
+
         public Tracker(IWaveStreamReader source, IDateTime dateTime)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
