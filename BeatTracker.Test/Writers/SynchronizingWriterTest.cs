@@ -13,17 +13,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
+using EasyAssertions;
 
 namespace BeatTracker.Test.Writers
 {
     [Collection("Synchronizing")]
-    public class SynchronizingPulserTest
+    public class SynchronizingWriterTest
     {
-        private const double ToleranceInMilliseconds = 2.5d;
+        private const double ToleranceInMilliseconds = 5.0d;
 
         private readonly ITestOutputHelper _output;
 
-        public SynchronizingPulserTest(ITestOutputHelper output)
+        public SynchronizingWriterTest(ITestOutputHelper output)
         {
             _output = output ?? throw new ArgumentNullException(nameof(output));
 
@@ -36,14 +37,16 @@ namespace BeatTracker.Test.Writers
             var tracker = A.Fake<ITracker>();
             var timer = A.Fake<ITimer>();
             var dateTime = new HighResolutionDateTime();
-            var pulseReceiver = A.Fake<IPulseReceiver>();
-            var writer = new SynchronizingPulser(tracker, timer, dateTime, pulseReceiver);
+            var writer = new MockSynchronizingWriter(tracker, timer, dateTime);
 
             var sw = Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < 5)
+            {
                 timer.Elapsed += Raise.WithEmpty();
+                Thread.Sleep(1);
+            }
 
-            A.CallTo(() => pulseReceiver.OnPulse()).MustNotHaveHappened();
+            writer.OnPulseActionCallCount.ShouldBe(0);
         }
 
         [Fact]
@@ -52,38 +55,52 @@ namespace BeatTracker.Test.Writers
             var tracker = A.Fake<ITracker>();
             var timer = A.Fake<ITimer>();
             var dateTime = new HighResolutionDateTime();
-            var pulseReceiver = A.Fake<IPulseReceiver>();
-            var writer = new SynchronizingPulser(tracker, timer, dateTime, pulseReceiver);
+            var writer = new MockSynchronizingWriter(tracker, timer, dateTime);
 
             tracker.BeatInfoChanged += Raise.With(new BeatInfo(100, dateTime.Now));
 
             var sw = Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < 5)
+            {
                 timer.Elapsed += Raise.WithEmpty();
+                Thread.Sleep(1);
+            }
 
-            A.CallTo(() => pulseReceiver.OnPulse()).MustHaveHappened();
+            writer.OnPulseActionCallCount.ShouldBeGreaterThan(0);
         }
 
         [Fact]
         public void DoesCallOnPulseWhenBeatInfoAvailableAndRemainsUnchanged()
         {
+            int runTimeInSeconds = 65;
+            var acceptableDeviationTolerance = 0.02d; // 2%
+
             var tracker = A.Fake<ITracker>();
             var timer = A.Fake<ITimer>();
             var dateTime = new HighResolutionDateTime();
-            var pulseReceiver = A.Fake<IPulseReceiver>();
-            var writer = new SynchronizingPulser(tracker, timer, dateTime, pulseReceiver);
+            var writer = new MockSynchronizingWriter(tracker, timer, dateTime);
 
             double bpm = 1000;
 
             tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
 
             var sw = Stopwatch.StartNew();
-            while (sw.Elapsed.TotalSeconds < 65)
+
+            while (sw.Elapsed.TotalSeconds < runTimeInSeconds)
             {
                 timer.Elapsed += Raise.WithEmpty();
+                Thread.Sleep(1);
             }
 
-            A.CallTo(() => pulseReceiver.OnPulse()).MustHaveHappened((int)bpm, Times.OrMore);
+            var theoreticalOnPulseCallCount = (runTimeInSeconds / TimeSpan.FromMinutes(1 / bpm).TotalSeconds);
+
+            var deviation = Math.Abs(writer.OnPulseActionCallCount - theoreticalOnPulseCallCount) / theoreticalOnPulseCallCount;
+
+            _output.WriteLine($"Expected Call Count: {theoreticalOnPulseCallCount}");
+            _output.WriteLine($"Actual Call Count: {writer.OnPulseActionCallCount}");
+            _output.WriteLine($"Deviation: {deviation:F5}");
+
+            deviation.ShouldBeLessThan(acceptableDeviationTolerance);
         }
 
         [Fact]
@@ -92,93 +109,96 @@ namespace BeatTracker.Test.Writers
             var tracker = A.Fake<ITracker>();
             var timer = A.Fake<ITimer>();
             var dateTime = new HighResolutionDateTime();
-            var pulseReceiver = A.Fake<IPulseReceiver>();
-            var writer = new SynchronizingPulser(tracker, timer, dateTime, pulseReceiver);
 
             double bpm = 1000;
-                        
-            writer.Offset = TimeSpan.FromMilliseconds(150);
-
             Stopwatch sw = null;
             double measuredOffset = 0;
-
             bool isRunning = true;
-
-            A.CallTo(() => pulseReceiver.OnPulse()).Invokes(call =>
+            
+            var onPulseAction = new Action(() =>
             {
                 measuredOffset = sw.Elapsed.TotalMilliseconds;
                 isRunning = false;
             });
-            
+
+            var writer = new MockSynchronizingWriter(tracker, timer, dateTime, onPulseAction);                                    
+            writer.Offset = TimeSpan.FromMilliseconds(150);
+                        
             tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
 
             sw = Stopwatch.StartNew();
 
             while (isRunning)
+            {
                 timer.Elapsed += Raise.WithEmpty();
+                Thread.Sleep(1);
+            }
 
             var deviation = Math.Abs(measuredOffset - writer.Offset.TotalMilliseconds);
 
-            _output.WriteLine($"Deviation: {deviation:F3}ms.");
-
-            Assert.True(deviation < ToleranceInMilliseconds);
+            deviation.ShouldBeLessThan(ToleranceInMilliseconds);
         }
 
         [Fact]
-        public void CalculatedInternalOffsetIsCorrect()
+        public void IsCalculatedOnPulseDurationCorrect()
         {
             var tracker = A.Fake<ITracker>();
             var timer = A.Fake<ITimer>();
             var dateTime = new HighResolutionDateTime();
-            var pulseReceiver = A.Fake<IPulseReceiver>();
-            var writer = new SynchronizingPulser(tracker, timer, dateTime, pulseReceiver);
 
             double bpm = 1000;
-
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
-
             var simulatedWorkTimeSpan = TimeSpan.FromMilliseconds(50);
 
-            A.CallTo(() => pulseReceiver.OnPulse()).Invokes(call => Thread.Sleep(simulatedWorkTimeSpan));
+            var onPulseAction = new Action(() =>
+            {
+                Thread.Sleep(simulatedWorkTimeSpan);
+            });
+
+            var writer = new MockSynchronizingWriter(tracker, timer, dateTime, onPulseAction);
+            
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
 
             var sw = Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < 10)
             {
                 timer.Elapsed += Raise.WithEmpty();
+                Thread.Sleep(1);
             }
 
-            var deviation = Math.Abs((simulatedWorkTimeSpan - writer.InternalOffset).TotalMilliseconds);
+            var deviation = Math.Abs((simulatedWorkTimeSpan - writer.AverageOnPulseDuration).TotalMilliseconds);
 
+            _output.WriteLine($"Simulated Work: {simulatedWorkTimeSpan}");
+            _output.WriteLine($"AverageOnPulseDuration: {writer.AverageOnPulseDuration}");
             _output.WriteLine($"Deviation: {deviation:F3}ms.");
 
-            Assert.True(deviation < ToleranceInMilliseconds);
+            deviation.ShouldBeLessThan(ToleranceInMilliseconds);
         }
 
         [Fact]
-        public void DoesRecalculateInternalOffsetWhenOnPulseCallTimeVaries()
+        public void DoesRecalculateOnPulseDuration()
         {
             var tracker = A.Fake<ITracker>();
             var timer = A.Fake<ITimer>();
             var dateTime = new HighResolutionDateTime();
-            var pulseReceiver = A.Fake<IPulseReceiver>();
-            var writer = new SynchronizingPulser(tracker, timer, dateTime, pulseReceiver);
+
+            var simulatedWorkTimeSpan = TimeSpan.FromMilliseconds(50);
+            var onPulseAction = new Action(() =>
+            {
+                Thread.Sleep(simulatedWorkTimeSpan);
+            });
+
+            var writer = new MockSynchronizingWriter(tracker, timer, dateTime, onPulseAction);
 
             var random = new Random();
             double bpm = 1000;
 
             tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
 
-            var simulatedWorkTimeSpan = TimeSpan.FromMilliseconds(50);
-
-            A.CallTo(() => pulseReceiver.OnPulse()).Invokes(call =>
-            {
-                Thread.Sleep(simulatedWorkTimeSpan);
-            });
-
             var sw = Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < 30)
             {
                 timer.Elapsed += Raise.WithEmpty();
+                Thread.Sleep(1);
             }
 
             simulatedWorkTimeSpan = TimeSpan.FromMilliseconds(75);
@@ -187,32 +207,34 @@ namespace BeatTracker.Test.Writers
             while (sw.Elapsed.TotalSeconds < 30)
             {
                 timer.Elapsed += Raise.WithEmpty();
+                Thread.Sleep(1);
             }
 
-            var deviation = Math.Abs((simulatedWorkTimeSpan - writer.InternalOffset).TotalMilliseconds);
+            var deviation = Math.Abs((simulatedWorkTimeSpan - writer.AverageOnPulseDuration).TotalMilliseconds);
 
+            _output.WriteLine($"Simulated Work: {simulatedWorkTimeSpan}");
+            _output.WriteLine($"AverageOnPulseDuration: {writer.AverageOnPulseDuration}");
             _output.WriteLine($"Deviation: {deviation:F3}ms.");
 
-            Assert.True(deviation < ToleranceInMilliseconds);
+            deviation.ShouldBeLessThan(ToleranceInMilliseconds);
         }
 
         [Fact]
         public void DoesBalanceOutWhenOnPulseCallsTakeTooLong()
         {
+            int runTimeInSeconds = 65;
+            var acceptableDeviationTolerance = 0.05d; // 5%
+
             var tracker = A.Fake<ITracker>();
             var timer = A.Fake<ITimer>();
             var dateTime = new HighResolutionDateTime();
-            var pulseReceiver = A.Fake<IPulseReceiver>();
-            var writer = new SynchronizingPulser(tracker, timer, dateTime, pulseReceiver);
 
             double bpm = 1000;
-
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
 
             // Simulate when work takes longer than bpm.
             var simulatedWorkTimeSpan = TimeSpan.FromMinutes(1 / bpm) + TimeSpan.FromMilliseconds(75);
 
-            A.CallTo(() => pulseReceiver.OnPulse()).Invokes(async call => 
+            var onPulseAction = new Action(async () =>
             {
                 // Findings:
 
@@ -225,13 +247,26 @@ namespace BeatTracker.Test.Writers
                 // Thread.Sleep(simulatedWorkTimeSpan);
             });
 
+            var writer = new MockSynchronizingWriter(tracker, timer, dateTime, onPulseAction);
+
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
+
             var sw = Stopwatch.StartNew();
-            while (sw.Elapsed.TotalSeconds < 65)
+            while (sw.Elapsed.TotalSeconds < runTimeInSeconds)
             {
                 timer.Elapsed += Raise.WithEmpty();
+                Thread.Sleep(1);
             }
+            
+            var theoreticalOnPulseCallCount = (runTimeInSeconds / TimeSpan.FromMinutes(1 / bpm).TotalSeconds);
 
-            A.CallTo(() => pulseReceiver.OnPulse()).MustHaveHappened((int)bpm, Times.OrMore);
+            var deviation = Math.Abs(writer.OnPulseActionCallCount - theoreticalOnPulseCallCount) / theoreticalOnPulseCallCount;
+
+            _output.WriteLine($"Expected Call Count: {theoreticalOnPulseCallCount}");
+            _output.WriteLine($"Actual Call Count: {writer.OnPulseActionCallCount}");
+            _output.WriteLine($"Deviation: {deviation:F5}");
+
+            deviation.ShouldBeLessThan(acceptableDeviationTolerance);
         }
     }
 }
