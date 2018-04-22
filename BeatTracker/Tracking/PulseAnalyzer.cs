@@ -27,11 +27,11 @@ namespace BeatTracker.Tracking
             var fftStepSize = 1;
 
             // How to map to BPM 30? (0.5 Hz)
-            
+
             var minBpm = 30;
             var maxBpm = 600;
 
-            _transformer = new FFTransformer(fftWindowSize, fftStepSize, 1, 10);
+            _transformer = new FFTransformer(fftWindowSize, fftStepSize, 1, 20);
             _transformer.FrameAvailable += _transformer_FrameAvailable;
         }
 

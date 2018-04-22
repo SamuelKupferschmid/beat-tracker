@@ -20,7 +20,7 @@ namespace BeatTracker.UI
 
         public PreprocessingVisualization()
         {
-            var reader = new MonoWaveFileReader("data/Drums.wav");
+            var reader = new MonoWaveFileReader("data/Mix.wav", convertStereoToMono: true);
 
             tracker = TrackerSetup.CreateWith<ConsoleWriter>(reader);
 

@@ -28,7 +28,7 @@ namespace BeatTracker.Tracking
             _streamReader = streamReader;
 
             int fftWindowSize = 1024;
-            int fftStepSize = 512;
+            int fftStepSize = 256;
 
             _transformer = new FFTransformer(fftWindowSize, fftStepSize, 0, 200);
 
