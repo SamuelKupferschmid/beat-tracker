@@ -54,7 +54,7 @@ namespace BeatTracker.Writers
         public DateTime GetNextOnPulseCallTime()
         {
             var copy = _currentBeatInfo;
-            if (copy != null)
+            if (copy != null && copy.Bpm > 0)
             {
                 var occursAt = copy.OccursAt;
                 var now = _dateTime.Now;
@@ -130,11 +130,12 @@ namespace BeatTracker.Writers
             {
                 lock (_syncRoot)
                 {
-                    _currentBeatInfo = new BeatInfo(_currentBeatInfo.Bpm, _currentBeatInfo.OccursAt + TimeSpan.FromMinutes(1 / _currentBeatInfo.Bpm));
+                    if (_currentBeatInfo.Bpm > 0)
+                        _currentBeatInfo = new BeatInfo(_currentBeatInfo.Bpm, _currentBeatInfo.OccursAt + TimeSpan.FromMinutes(1 / _currentBeatInfo.Bpm));
                 }
 
 #if DEBUG
-                if (_lastOnPulseCallTime.HasValue)
+                if (_lastOnPulseCallTime.HasValue && _currentBeatInfo.Bpm > 0)
                 {
                     ++_onPulseCallCount;
 

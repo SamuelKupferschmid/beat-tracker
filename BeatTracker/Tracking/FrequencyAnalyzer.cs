@@ -26,7 +26,12 @@ namespace BeatTracker.Tracking
         public FrequencyAnalyzer(IWaveStreamReader streamReader)
         {
             _streamReader = streamReader;
-            _transformer = new FFTransformer(200);
+
+            int fftWindowSize = 1024;
+            int fftStepSize = 512;
+
+            _transformer = new FFTransformer(fftWindowSize, fftStepSize, 0, 200);
+
             _transformer.FrameAvailable += _transformer_FrameAvailable;
             _streamReader.DataAvailable += _streamReader_DataAvailable;
             _rawFile = File.OpenWrite("C:\\tmp\\novelty.dat");
@@ -52,17 +57,17 @@ namespace BeatTracker.Tracking
 
             var noveltyCurve = e.Select(Math.Abs).Sum();
 
-            counter++;
-            smoothedValue += noveltyCurve / smoothWindow;
+            //counter++;
+            //smoothedValue += noveltyCurve / smoothWindow;
 
-            if (counter > smoothWindow)
-            {
-                smoothedValue -= smoothedValue / smoothWindow;
-            }
+            //if (counter > smoothWindow)
+            //{
+            //    smoothedValue -= smoothedValue / smoothWindow;
+            //}
 
-            noveltyCurve -= smoothedValue;
+            //noveltyCurve -= smoothedValue;
 
-            var log = new float[100];
+            var log = new float[200];
 
             log[(int)noveltyCurve.Clamp(0, float.MaxValue)] = 1;
             _outputLogger.AddSampe(log);
