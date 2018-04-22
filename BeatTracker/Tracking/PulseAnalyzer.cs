@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BeatTracker.Readers;
+using BeatTracker.Utils;
+using MathNet.Numerics.IntegralTransforms;
 
 namespace BeatTracker.Tracking
 {
@@ -15,9 +17,21 @@ namespace BeatTracker.Tracking
         private readonly FFTransformer _transformer;
         private readonly float[] _buffer = new float[1];
 
+        private readonly SpectrumLogger _outputLogger = SpectrumLogger.Create("PulseAnalyzer");
+
         public PulseAnalyzer()
         {
-            _transformer = new FFTransformer(100);
+            var frequencyAnalyzerRate = 2;
+
+            var fftWindowSize = 8 * frequencyAnalyzerRate;
+            var fftStepSize = 1;
+
+            // How to map to BPM 30? (0.5 Hz)
+            
+            var minBpm = 30;
+            var maxBpm = 600;
+
+            _transformer = new FFTransformer(fftWindowSize, fftStepSize, 1, 10);
             _transformer.FrameAvailable += _transformer_FrameAvailable;
         }
 
@@ -25,17 +39,39 @@ namespace BeatTracker.Tracking
 
         private void _transformer_FrameAvailable(object sender, float[] e)
         {
-            //TODO implement low pulse extraction
+            var hz = GetMaxHz(e);
+            var confidence = e[hz];
+            var bpm = hz * 60;
+
+            _outputLogger.AddSampe(e);
+
             PulseExtracted?.Invoke(this, new[]
             {
-                (60f, 1f)
+                ((float)bpm, (float)confidence)
             });
         }
 
         public void AddFrame(float f)
         {
             _buffer[0] = f;
-            _transformer.AddSamples(new WaveSamples(_buffer,1));
+            _transformer.AddSamples(new WaveSamples(_buffer,_buffer.Length));
+        }
+
+        private int GetMaxHz(float[] e)
+        {
+            int hz = 0;
+            float confidence = float.MinValue;
+
+            for (int i = 0; i < e.Length; i++)
+            {
+                if (e[i] > confidence)
+                {
+                    hz = i;
+                    confidence = e[i];
+                }
+            }
+
+            return hz;
         }
     }
 }

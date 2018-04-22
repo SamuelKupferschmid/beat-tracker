@@ -15,15 +15,19 @@ namespace BeatTracker.Readers
         private bool running = false;
         readonly float[] _buffer = new float[_BufferSize];
 
-        public MonoWaveFileReader(Stream stream)
+        public MonoWaveFileReader(Stream stream, bool convertStereoToMono = true)
         {
             _stream = stream;
             _reader = new WaveFileReader(stream);
-            _sampleProvider = new StereoToMonoProvider16(_reader).ToSampleProvider();
+            
+            if (convertStereoToMono)
+                _sampleProvider = new StereoToMonoProvider16(_reader).ToSampleProvider();
+            else
+                _sampleProvider = _reader.ToSampleProvider();
         }
 
-        public MonoWaveFileReader(string filename)
-            : this(File.OpenRead(filename))
+        public MonoWaveFileReader(string filename, bool convertStereoToMono = true)
+            : this(File.OpenRead(filename), convertStereoToMono)
         {
         }
 

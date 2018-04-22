@@ -105,6 +105,9 @@
     <Content Include="data\Click.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\Click_5_min.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\Notes.txt" />
     <None Include="Timers\Notes.txt" />
   </ItemGroup>

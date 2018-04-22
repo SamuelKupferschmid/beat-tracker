@@ -60,7 +60,7 @@ namespace BeatTracker.Readers
                 if (_bufferedWaveProvider.BufferedBytes == _bufferedWaveProvider.BufferLength)
                 {
                     int count = _sampleProvider.Read(_sampleBuffer, 0, SampleBufferSize);
-                    DataAvailable?.Invoke(this, new WaveSample(_sampleBuffer, count));
+                    DataAvailable?.Invoke(this, new WaveSamples(_sampleBuffer, count));
 
                     _bufferedWaveProvider.ClearBuffer();
                 }
@@ -72,7 +72,7 @@ namespace BeatTracker.Readers
 
         public WaveFormat WaveFormat => _device.WaveFormat;
 
-        public event EventHandler<WaveSample> DataAvailable;
+        public event EventHandler<WaveSamples> DataAvailable;
 
         public void Dispose()
         {
