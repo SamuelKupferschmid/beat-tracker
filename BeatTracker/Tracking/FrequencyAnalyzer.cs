@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BeatTracker.Readers;
+using BeatTracker.Tracking.Configuration;
 using BeatTracker.Utils;
 using MathNet.Numerics.Statistics;
 using NAudio.Utils;
@@ -18,15 +19,17 @@ namespace BeatTracker.Tracking
     /// </summary>
     public class FrequencyAnalyzer
     {
+        private readonly BeatAnalysisConfiguration _configuration;
         private readonly IWaveStreamReader _streamReader;
         private readonly FFTransformer _transformer;
         private readonly SpectrumLogger _inputLogger = SpectrumLogger.Create("FrequencyAnalyzer - Input");
         private readonly SpectrumLogger _outputLogger = SpectrumLogger.Create("FrequencyAnalyzer - Novelty Curve");
 
-        public FrequencyAnalyzer(IWaveStreamReader streamReader)
+        public FrequencyAnalyzer(BeatAnalysisConfiguration configuration, IWaveStreamReader streamReader)
         {
+            _configuration = configuration;
             _streamReader = streamReader;
-            _transformer = new FFTransformer(200);
+            _transformer = new FFTransformer(configuration.FrequenzyAnalyzerWindowSize);
             _transformer.FrameAvailable += _transformer_FrameAvailable;
             _streamReader.DataAvailable += _streamReader_DataAvailable;
             _rawFile = File.OpenWrite("C:\\tmp\\novelty.dat");

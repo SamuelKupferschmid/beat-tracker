@@ -67,9 +67,15 @@
     <Compile Include="Timers\ITimer.cs" />
     <Compile Include="Timers\StopwatchTimer.cs" />
     <Compile Include="TrackerSetup.cs" />
+    <Compile Include="Tracking\Parameters\BeatAnalysisParameterSearch.cs" />
+    <Compile Include="Tracking\Parameters\GridSearch.cs" />
+    <Compile Include="Tracking\Parameters\ParameterRangeDefinition.cs" />
+    <Compile Include="Tracking\TrackerCalibration.cs" />
+    <Compile Include="Tracking\Parameters\ConfigurationRangeAttribute.cs" />
     <Compile Include="Tracking\FrequencyAnalyzer.cs" />
     <Compile Include="Tracking\PulseAnalyzer.cs" />
     <Compile Include="Tracking\FFTransformer.cs" />
+    <Compile Include="Tracking\Parameters\BeatAnalysisConfiguration.cs" />
     <Compile Include="Utils\ComparableExtensions.cs" />
     <Compile Include="Utils\SpectrumLogger.cs" />
     <Compile Include="Tracking\ITracker.cs" />
