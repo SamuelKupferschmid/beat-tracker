@@ -37,6 +37,11 @@ namespace BeatTracker.UI
         private int _offset = 0;
         private Bitmap _bitmap;
 
+        public void SetTitle(object sender, string title)
+        {
+            Invoke(new Action(() => Text = title));
+        }
+
         public void AddFrame(object sender, float[] frame)
         {
             var min = float.MaxValue;

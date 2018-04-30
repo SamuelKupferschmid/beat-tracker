@@ -16,6 +16,8 @@ namespace BeatTracker.Tracking
     {
         private readonly FFTransformer _transformer;
         private readonly float[] _buffer = new float[1];
+        private readonly double minBpm = 20;
+        private readonly double maxBpm = 220;
 
         private readonly SpectrumLogger _outputLogger = SpectrumLogger.Create("PulseAnalyzer");
 
@@ -26,12 +28,7 @@ namespace BeatTracker.Tracking
             var fftWindowSize = 8 * frequencyAnalyzerRate;
             var fftStepSize = 1;
 
-            // How to map to BPM 30? (0.5 Hz)
-
-            var minBpm = 30;
-            var maxBpm = 600;
-
-            _transformer = new FFTransformer(fftWindowSize, fftStepSize, 1, 20);
+            _transformer = new FFTransformer(200, fftStepSize, 1, 20);
             _transformer.FrameAvailable += _transformer_FrameAvailable;
         }
 
@@ -45,11 +42,20 @@ namespace BeatTracker.Tracking
 
             _outputLogger.AddSampe(e);
 
+            if(bpm == prev || bpm < minBpm || bpm > maxBpm)
+                return;
+
+            prev = bpm;
+
+            _outputLogger.SetTitle($"BPM: {bpm} confidence: {confidence}");
+
             PulseExtracted?.Invoke(this, new[]
             {
                 ((float)bpm, (float)confidence)
             });
         }
+
+        private int prev = 0;
 
         public void AddFrame(float f)
         {

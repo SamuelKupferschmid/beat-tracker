@@ -20,18 +20,21 @@ namespace BeatTracker.UI
 
         public PreprocessingVisualization()
         {
-            var reader = new MonoWaveFileReader("data/Mix.wav", convertStereoToMono: true);
+             var reader = new MonoWaveFileReader("data/Drums.wav", convertStereoToMono: true);
+            //var reader = new WaveInputDeviceReader(0);
 
-            tracker = TrackerSetup.CreateWith<ConsoleWriter>(reader);
+            tracker = TrackerSetup.CreateWith<MidiMetronomeWriter>(reader);
 
             foreach (var inst in SpectrumLogger.Instances)
             {
                 var form = new SpectrumVisualization {Text = inst.Name};
                 inst.OnFrame += form.AddFrame;
+                inst.OnTitleChange += form.SetTitle;
                 form.Show();
                 form.FormClosing += (sender, args) =>
                 {
                     inst.OnFrame -= form.AddFrame;
+                    inst.OnTitleChange -= form.SetTitle;
                     StopApplication();
                 };
             }

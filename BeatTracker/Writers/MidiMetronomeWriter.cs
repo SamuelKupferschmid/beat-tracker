@@ -10,6 +10,9 @@ namespace BeatTracker.Writers
     {
         protected readonly OutputDevice OutputDevice;
 
+        public MidiMetronomeWriter(ITracker tracker)
+            :this(tracker, 0) { }
+
         public MidiMetronomeWriter(ITracker tracker, int deviceId)
             : base(tracker)
         {

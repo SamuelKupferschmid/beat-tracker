@@ -167,11 +167,7 @@
 
         private void TimerCallbackMethod(uint id, uint msg, ref uint userCtx, uint rsv1, uint rsv2)
         {
-            var handler = Elapsed;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
+            Elapsed?.Invoke(this, EventArgs.Empty);
         }
 
         private void CheckDisposed()

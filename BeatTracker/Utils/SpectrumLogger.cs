@@ -29,7 +29,14 @@ namespace BeatTracker.Utils
             OnFrame?.Invoke(this, sample);
         }
 
+        public void SetTitle(string title)
+        {
+            OnTitleChange?.Invoke(this, title);
+        }
+
         public event EventHandler<float[]> OnFrame; 
+
+        public event EventHandler<string> OnTitleChange; 
 
         private static readonly List<SpectrumLogger> _instances  = new List<SpectrumLogger>();
 
