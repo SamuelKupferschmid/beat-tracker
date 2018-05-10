@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using Timer = System.Timers.Timer;
 
 namespace BeatTracker.Readers
@@ -12,22 +13,26 @@ namespace BeatTracker.Readers
         private readonly WaveFileReader _reader;
         private readonly ISampleProvider _sampleProvider;
         private static readonly int _BufferSize = 1000;
-        private bool running = false;
+        private bool _running = false;
         readonly float[] _buffer = new float[_BufferSize];
 
-        public MonoWaveFileReader(Stream stream, bool convertStereoToMono = true)
+        private readonly bool _isSourceStereo;
+
+        public MonoWaveFileReader(Stream stream, bool isSourceStereo = true)
         {
             _stream = stream;
             _reader = new WaveFileReader(stream);
             
-            if (convertStereoToMono)
+            _isSourceStereo = isSourceStereo;
+
+            if (_isSourceStereo)
                 _sampleProvider = new StereoToMonoProvider16(_reader).ToSampleProvider();
             else
                 _sampleProvider = _reader.ToSampleProvider();
         }
 
-        public MonoWaveFileReader(string filename, bool convertStereoToMono = true)
-            : this(File.OpenRead(filename), convertStereoToMono)
+        public MonoWaveFileReader(string filename, bool isSourceStereo = true)
+            : this(File.OpenRead(filename), isSourceStereo)
         {
         }
 
@@ -38,14 +43,14 @@ namespace BeatTracker.Readers
 
         public void Start(bool simulatePlaybackspeed)
         {
-            running = true;
+            _running = true;
             if (simulatePlaybackspeed)
             {
                 var timer = new Timer();
 
                 timer.Elapsed += (sender, args) =>
                 {
-                    if (running && _reader.Position < _reader.Length)
+                    if (_running && _reader.Position < _reader.Length)
                     {
                         ReadNext();
                     }
@@ -57,12 +62,17 @@ namespace BeatTracker.Readers
                 };
 
                 timer.AutoReset = true;
-                timer.Interval = 44100d / _BufferSize;
+
+                if (_isSourceStereo)
+                    timer.Interval = 44100d / _BufferSize;
+                else
+                    timer.Interval = 22050d / _BufferSize;
+
                 timer.Start();
             }
             else
             {
-                while (running && _reader.Position < _reader.Length)
+                while (_running && _reader.Position < _reader.Length)
                 {
                     ReadNext();
                 }
@@ -77,7 +87,7 @@ namespace BeatTracker.Readers
 
         public void Stop()
         {
-            running = false;
+            _running = false;
         }
 
         public WaveFormat WaveFormat => _reader.WaveFormat;

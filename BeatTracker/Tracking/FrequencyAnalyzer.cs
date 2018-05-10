@@ -28,13 +28,13 @@ namespace BeatTracker.Tracking
             _streamReader = streamReader;
 
             int fftWindowSize = 1024;
-            int fftStepSize = 256;
+            int fftStepSize = 512;
 
-            _transformer = new FFTransformer(fftWindowSize, fftStepSize, 0, 200);
+            _transformer = new FFTransformer(fftWindowSize, fftStepSize, 0, 512);
+            //_transformer.UseWindow = true;
 
             _transformer.FrameAvailable += _transformer_FrameAvailable;
             _streamReader.DataAvailable += _streamReader_DataAvailable;
-            _rawFile = File.OpenWrite("C:\\tmp\\novelty.dat");
         }
 
         public event EventHandler<float> FrameAvailable;
@@ -45,7 +45,6 @@ namespace BeatTracker.Tracking
         }
 
         private readonly Queue<double> buffer = new Queue<double>(8);
-        private FileStream _rawFile;
 
         private int counter = 0;
         private float smoothedValue = 0;

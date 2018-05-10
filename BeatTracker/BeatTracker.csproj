@@ -67,6 +67,7 @@
     <Compile Include="Timers\ITimer.cs" />
     <Compile Include="Timers\StopwatchTimer.cs" />
     <Compile Include="TrackerSetup.cs" />
+    <Compile Include="Tracking\BufferedTransformer.cs" />
     <Compile Include="Tracking\FrequencyAnalyzer.cs" />
     <Compile Include="Tracking\PulseAnalyzer.cs" />
     <Compile Include="Tracking\FFTransformer.cs" />
