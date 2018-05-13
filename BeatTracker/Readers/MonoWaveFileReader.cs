@@ -18,21 +18,19 @@ namespace BeatTracker.Readers
 
         private readonly bool _isSourceStereo;
 
-        public MonoWaveFileReader(Stream stream, bool isSourceStereo = true)
+        public MonoWaveFileReader(Stream stream)
         {
             _stream = stream;
             _reader = new WaveFileReader(stream);
-            
-            _isSourceStereo = isSourceStereo;
 
-            if (_isSourceStereo)
+            if (_reader.WaveFormat.Channels == 2)
                 _sampleProvider = new StereoToMonoProvider16(_reader).ToSampleProvider();
             else
                 _sampleProvider = _reader.ToSampleProvider();
         }
 
-        public MonoWaveFileReader(string filename, bool isSourceStereo = true)
-            : this(File.OpenRead(filename), isSourceStereo)
+        public MonoWaveFileReader(string filename)
+            : this(File.OpenRead(filename))
         {
         }
 
@@ -90,7 +88,7 @@ namespace BeatTracker.Readers
             _running = false;
         }
 
-        public WaveFormat WaveFormat => _reader.WaveFormat;
+        public WaveFormat WaveFormat => _sampleProvider.WaveFormat;
 
         public event EventHandler<WaveSamples> DataAvailable;
 
