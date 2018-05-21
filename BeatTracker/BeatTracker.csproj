@@ -68,12 +68,13 @@
     <Compile Include="Timers\StopwatchTimer.cs" />
     <Compile Include="TrackerSetup.cs" />
     <Compile Include="Tracking\BufferedTransformer.cs" />
-    <Compile Include="Tracking\FrequencyAnalyzer.cs" />
+    <Compile Include="Tracking\NoveltyAnalyzer.cs" />
     <Compile Include="Tracking\PulseAnalyzer.cs" />
-    <Compile Include="Tracking\FFTransformer.cs" />
     <Compile Include="Utils\ComparableExtensions.cs" />
+    <Compile Include="Utils\SignalProcessing.cs" />
     <Compile Include="Utils\SpectrumLogger.cs" />
     <Compile Include="Tracking\ITracker.cs" />
+    <Compile Include="Utils\Window.cs" />
     <Compile Include="Writers\ConsoleWriter.cs" />
     <Compile Include="Writers\MidiMetronomeWriter.cs" />
     <Compile Include="Writers\SynchronizingWriter.cs" />

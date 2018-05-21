@@ -26,16 +26,16 @@ namespace BeatTracker.Tracking
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _dateTime = dateTime ?? throw new ArgumentNullException(nameof(dateTime));
 
-            FrequencyAnalyzer = new FrequencyAnalyzer(_source);
+            NoveltyAnalyzer = new NoveltyAnalyzer(_source);
             PulseAnalyzer = new PulseAnalyzer();
 
-            FrequencyAnalyzer.FrameAvailable += (sender, frameValue) => PulseAnalyzer.AddFrame(frameValue);
+            NoveltyAnalyzer.FrameAvailable += (sender, frameValue) => PulseAnalyzer.AddFrame(frameValue);
             PulseAnalyzer.PulseExtracted += PulseAnalyzerOnPulseExtracted;
         }
 
         public event EventHandler<BeatInfo> BeatInfoChanged;
 
-        public FrequencyAnalyzer FrequencyAnalyzer { get; }
+        public NoveltyAnalyzer NoveltyAnalyzer { get; }
 
         public BeatInfo BeatInfo { get; private set; }
 

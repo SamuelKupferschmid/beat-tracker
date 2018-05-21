@@ -35,7 +35,7 @@ namespace BeatTracker.UI
 
             //** Pulse Block End
 
-            var reader = new MonoWaveFileReader("data/110-130bpm_click_new.wav", isSourceStereo: false);
+            var reader = new MonoWaveFileReader("data/ag1.wav");
 
             tracker = TrackerSetup.CreateWith<ConsoleWriter>(reader);
 

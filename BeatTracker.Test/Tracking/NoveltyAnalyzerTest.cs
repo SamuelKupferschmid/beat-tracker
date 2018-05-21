@@ -12,15 +12,15 @@ using Xunit;
 
 namespace BeatTracker.Test.Tracking
 {
-    public class FrequencyAnalyzerTest
+    public class NoveltyAnalyzerTest
     {
-        private FrequencyAnalyzer _testee;
-        private MonoWaveFileReader _waveFileReader;
+        private readonly NoveltyAnalyzer _testee;
+        private readonly MonoWaveFileReader _waveFileReader;
 
-        public FrequencyAnalyzerTest()
+        public NoveltyAnalyzerTest()
         {
-            _waveFileReader = new MonoWaveFileReader("data\\ag1.wav",false);
-            _testee = new FrequencyAnalyzer(_waveFileReader);
+            _waveFileReader = new MonoWaveFileReader("data\\ag1.wav");
+            _testee = new NoveltyAnalyzer(_waveFileReader);
 
         }
         [Fact]

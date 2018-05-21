@@ -16,13 +16,10 @@ namespace BeatTracker.Readers
         private bool _running = false;
         readonly float[] _buffer = new float[_BufferSize];
 
-        private readonly bool _isSourceStereo;
-
         public MonoWaveFileReader(Stream stream)
         {
             _stream = stream;
             _reader = new WaveFileReader(stream);
-
             if (_reader.WaveFormat.Channels == 2)
                 _sampleProvider = new StereoToMonoProvider16(_reader).ToSampleProvider();
             else
@@ -61,7 +58,7 @@ namespace BeatTracker.Readers
 
                 timer.AutoReset = true;
 
-                if (_isSourceStereo)
+                if (WaveFormat.Channels == 2)
                     timer.Interval = 44100d / _BufferSize;
                 else
                     timer.Interval = 22050d / _BufferSize;
@@ -80,6 +77,7 @@ namespace BeatTracker.Readers
         private void ReadNext()
         {
             int length = _sampleProvider.Read(_buffer, 0, _BufferSize);
+
             OnDataAvailable(new WaveSamples(_buffer, length));
         }
 

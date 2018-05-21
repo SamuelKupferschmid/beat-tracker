@@ -15,18 +15,14 @@ namespace BeatTracker.Tracking
 
         private float[] _windowBuffer;
         private int _totalProcessed;
-
-        private int _windowSize;
-        private int _stepSize;
-
         private readonly Func<float[], float[]> _transformerFunc;
 
-        public BufferedTransformer(int windowSize, Func<float[], float[]> transformerFunc)
+        public BufferedTransformer(int windowSize, Func<float[], float[]> transformerFunc = null)
             : this(windowSize, windowSize, transformerFunc)
         {
         }
 
-        public BufferedTransformer(int windowSize, int stepSize, Func<float[], float[]> transformerFunc)
+        public BufferedTransformer(int windowSize, int stepSize, Func<float[], float[]> transformerFunc = null)
         {
             if (windowSize <= 0)
                 throw new ArgumentException(nameof(windowSize));
@@ -34,18 +30,18 @@ namespace BeatTracker.Tracking
             if (stepSize <= 0 || stepSize > windowSize)
                 throw new ArgumentException(nameof(stepSize));
 
-            _transformerFunc = transformerFunc ?? throw new ArgumentNullException(nameof(transformerFunc));
+            _transformerFunc = transformerFunc;
 
-            _windowSize = windowSize;
-            _stepSize = stepSize;
+            WindowSize = windowSize;
+            StepSize = stepSize;
 
             _stepBuffer = new float[stepSize];
             _windowBuffer = new float[windowSize];
         }
 
-        public int WindowSize => _windowSize;
+        public int WindowSize { get; }
 
-        public int StepSize => _stepSize;
+        public int StepSize { get; }
 
         public void AddSamples(WaveSamples samples)
         {
@@ -69,25 +65,25 @@ namespace BeatTracker.Tracking
                 }
                 else if (_stepBufferPos == _stepBuffer.Length)
                 {
-                    var window = new float[_windowSize];
-                    Array.Copy(_windowBuffer, _stepBuffer.Length, window, 0, _windowSize - _stepBuffer.Length);
-                    Array.Copy(_stepBuffer, 0, window, _windowSize - _stepBuffer.Length, _stepBuffer.Length);
+                    var window = new float[WindowSize];
+                    Array.Copy(_windowBuffer, _stepBuffer.Length, window, 0, WindowSize - _stepBuffer.Length);
+                    Array.Copy(_stepBuffer, 0, window, WindowSize - _stepBuffer.Length, _stepBuffer.Length);
 
-                    if (_totalProcessed >= _windowSize)
+                    if (_totalProcessed >= WindowSize)
                     {
                         CopyAndTransform(window);
                     }
 
                     _windowBuffer = window;
 
-                    _stepBuffer = new float[_stepSize];
+                    _stepBuffer = new float[StepSize];
                     _stepBufferPos = 0;
                 }
 
                 processed += actual;
                 remaining -= actual;
 
-                if (_totalProcessed < _windowSize)
+                if (_totalProcessed < WindowSize)
                     _totalProcessed += actual;
             }
         }
@@ -97,7 +93,7 @@ namespace BeatTracker.Tracking
             var copy = new float[data.Length];
             Array.Copy(data, copy, data.Length);
 
-            var transformed = _transformerFunc(copy);
+            var transformed = _transformerFunc == null ? copy : _transformerFunc(copy);
 
             FrameAvailable?.Invoke(this, transformed);
         }
