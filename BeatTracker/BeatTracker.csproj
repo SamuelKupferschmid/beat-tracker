@@ -68,8 +68,11 @@
     <Compile Include="Timers\StopwatchTimer.cs" />
     <Compile Include="TrackerSetup.cs" />
     <Compile Include="Tracking\BufferedTransformer.cs" />
-    <Compile Include="Tracking\NoveltyAnalyzer.cs" />
+    <Compile Include="Tracking\NoveltyCurve\NoveltyAnalyzer.cs" />
+    <Compile Include="Tracking\NoveltyCurve\NoveltyParameters.cs" />
     <Compile Include="Tracking\PulseAnalyzer.cs" />
+    <Compile Include="Tracking\NoveltyCurve\SmoothedHannSubstraction.cs" />
+    <Compile Include="Tracking\NoveltyCurve\SpectrumAnalyzer.cs" />
     <Compile Include="Utils\ComparableExtensions.cs" />
     <Compile Include="Utils\SignalProcessing.cs" />
     <Compile Include="Utils\SpectrumLogger.cs" />

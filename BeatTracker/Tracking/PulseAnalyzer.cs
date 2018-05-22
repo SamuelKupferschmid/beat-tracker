@@ -23,15 +23,14 @@ namespace BeatTracker.Tracking
 
         private float[] _bpmFrequencies;
         
-        private readonly float _featureRate;
+        private readonly int _featureRate;
 
-        public PulseAnalyzer()
+        public PulseAnalyzer(int featureRate)
         {
             //var audioSampleRate = 22050; // Mono 22.05 KHz
             //var frequencyAnalyzerStepSize = 512;
             //_featureRate = audioSampleRate / (float)frequencyAnalyzerStepSize;
-
-            _featureRate = 200;
+            _featureRate = featureRate;
             var fftWindowSize = 6 * _featureRate; // 6 Seconds
             var fftStepSize = 40;
 

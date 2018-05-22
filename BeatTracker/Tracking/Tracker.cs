@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using BeatTracker.Readers;
 using BeatTracker.Timers;
+using BeatTracker.Tracking.NoveltyCurve;
 using MathNet.Numerics.IntegralTransforms;
 using MathNet.Numerics.Random;
 using NAudio.Utils;
@@ -27,7 +28,7 @@ namespace BeatTracker.Tracking
             _dateTime = dateTime ?? throw new ArgumentNullException(nameof(dateTime));
 
             NoveltyAnalyzer = new NoveltyAnalyzer(_source);
-            PulseAnalyzer = new PulseAnalyzer();
+            PulseAnalyzer = new PulseAnalyzer(NoveltyAnalyzer.Parameters.FeatureRate);
 
             NoveltyAnalyzer.FrameAvailable += (sender, frameValue) => PulseAnalyzer.AddFrame(frameValue);
             PulseAnalyzer.PulseExtracted += PulseAnalyzerOnPulseExtracted;

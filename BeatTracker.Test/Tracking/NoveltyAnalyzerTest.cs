@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BeatTracker.Readers;
 using BeatTracker.Tracking;
+using BeatTracker.Tracking.NoveltyCurve;
 using EasyAssertions;
 using FakeItEasy;
 using Xunit;
