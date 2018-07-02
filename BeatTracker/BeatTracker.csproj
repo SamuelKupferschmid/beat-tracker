@@ -85,6 +85,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram_4.cd" />
+    <None Include="ClassDiagram_3.cd" />
+    <None Include="ClassDiagram_2.cd" />
+    <None Include="ClassDiagram_1.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

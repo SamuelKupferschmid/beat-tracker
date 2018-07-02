@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="BeatTracker.Writers.SynchronizingWriter">
+    <Position X="4.75" Y="0.5" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>BgAAAAEQAiAgAAAAwQQEAAQgAAAIAAAAIABBAAAIgAA=</HashCode>
+      <FileName>Writers\SynchronizingWriter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="BeatTracker.Timers.ITimer">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAQCAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Timers\ITimer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

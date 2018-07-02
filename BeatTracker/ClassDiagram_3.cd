@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="BeatTracker.Tracking.Tracker" BaseTypeListCollapsed="true">
+    <Position X="6" Y="2.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAEAEAQAGAAAAAAAAAAAAAACBAAAAAAIAAAAAADAAA=</HashCode>
+      <FileName>Tracking\Tracker.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BeatTracker.Tracking.BeatInfo">
+    <Position X="4" Y="4.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Tracking\BeatInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="BeatTracker.Tracking.ITracker">
+    <Position X="6" Y="1" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Tracking\ITracker.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BeatTracker.Timers.IDateTime">
+    <Position X="4.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Timers\IDateTime.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

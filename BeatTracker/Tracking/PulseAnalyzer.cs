@@ -22,18 +22,15 @@ namespace BeatTracker.Tracking
         private readonly SpectrumLogger _outputLogger = SpectrumLogger.Create("PulseAnalyzer");
 
         private float[] _bpmFrequencies;
-        
+
+        private double[] _window;
+        private double _windowNormalizeFactor;
+
         private readonly float _featureRate;
 
         public PulseAnalyzer()
         {
-            //var audioSampleRate = 22050; // Mono 22.05 KHz
-            //var frequencyAnalyzerStepSize = 512;
-            //_featureRate = audioSampleRate / (float)frequencyAnalyzerStepSize;
-
-            _featureRate = 200;
-            var fftWindowSize = 6 * _featureRate; // 6 Seconds
-            var fftStepSize = 40;
+            // ** Initialize BPM Frequency Range
 
             var minBpm = 30;
             var maxBpm = 600;
@@ -45,17 +42,30 @@ namespace BeatTracker.Tracking
                 _bpmFrequencies[i - minBpm] = i / 60.0f;
             }
 
+            // ** Initialize BufferedTransformer
+
+            //var audioSampleRate = 22050; // Mono 22.05 KHz
+            //var frequencyAnalyzerStepSize = 512;
+            //_featureRate = audioSampleRate / (float)frequencyAnalyzerStepSize;
+
+            _featureRate = 200;
+            var fftWindowSize = 6 * _featureRate; // 6 Seconds
+            var fftStepSize = Math.Ceiling(_featureRate / 5);
+
             _transformer = new BufferedTransformer((int)fftWindowSize, (int)fftStepSize, Transform_via_DFT_v2);
             _transformer.FrameAvailable += _transformer_FrameAvailable;
+
+            // ** Initialize Window Function
+
+            _window = MathNet.Numerics.Window.Hann(_transformer.WindowSize);
+            _windowNormalizeFactor = Math.Sqrt(_transformer.WindowSize) / _window.Sum() * _transformer.WindowSize;
         }
 
         private float[] Transform_via_DFT_v1(float[] data)
         {
-            var transformed = new float[_bpmFrequencies.Length];
+            var transformedVector = Vector<float>.Build.Dense(_bpmFrequencies.Length);
 
-            var window = MathNet.Numerics.Window.Hann(_transformer.WindowSize);
-
-            for (int f = 0; f < transformed.Length; f++)
+            for (int f = 0; f < _bpmFrequencies.Length; f++)
             {
                 var twoPiFreq = 2 * Math.PI * _bpmFrequencies[f];
 
@@ -68,18 +78,18 @@ namespace BeatTracker.Tracking
                     var cosFunc = Math.Cos(twoPiFreq * timedValue);
                     var sinFunc = Math.Sin(twoPiFreq * timedValue);
 
-                    cosValue += (data[s] * window[s] * cosFunc);
-                    sinValue += (data[s] * window[s] * sinFunc);
+                    cosValue += (data[s] * _window[s] * cosFunc);
+                    sinValue += (data[s] * _window[s] * sinFunc);
                 }
 
+                var magnitude = new Complex(cosValue, sinValue).Magnitude;
 
-                var complex = new Complex(cosValue, sinValue);
-                var value = (float)complex.Magnitude;
-
-                transformed[f] = value;
+                transformedVector[f] = (float)(magnitude * _windowNormalizeFactor);
             }
 
-            return transformed;
+            transformedVector = transformedVector.Normalize(2);
+
+            return transformedVector.AsArray();
         }
 
         private Matrix<float> _DFT_Cos_Matrix;
@@ -116,11 +126,23 @@ namespace BeatTracker.Tracking
             var cosValues = _DFT_Cos_Matrix * dataVector;
             var sinValues = _DFT_Sin_Matrix * dataVector;
                         
-            var transformed = new float[_bpmFrequencies.Length];
+            var transformedVector = Vector<float>.Build.Dense(_bpmFrequencies.Length);
             for (int i = 0; i < _bpmFrequencies.Length; i++)
-                transformed[i] = (float)new Complex(cosValues[i], sinValues[i]).Magnitude;
+            {
+                var magnitude = new Complex(cosValues[i], sinValues[i]).Magnitude;
+                transformedVector[i] = (float)(magnitude * _windowNormalizeFactor);
+            }
 
-            return transformed;
+            transformedVector = transformedVector.Normalize(2);
+
+            return transformedVector.AsArray();
+        }
+
+        private float[] Transform_via_ACF_v1(float[] data)
+        {
+
+
+            return data;
         }
 
         public event EventHandler<IEnumerable<(float bpm, float confidence)>> PulseExtracted;
@@ -131,7 +153,9 @@ namespace BeatTracker.Tracking
             var confidence = e[index];
             var bpm = _bpmFrequencies[index] * 60;
 
+#if DEBUG
             System.Diagnostics.Debug.Print($"BPM: {bpm:F} | Confidence: {confidence:F5}");
+#endif
 
             _outputLogger.AddSampe(e);
 
@@ -150,7 +174,7 @@ namespace BeatTracker.Tracking
         private int GetMaxFreqIndex(float[] e)
         {
             int freqIndex = 0;
-            float confidence = float.MinValue;
+            float confidence = 0;
 
             for (int i = 0; i < e.Length; i++)
             {

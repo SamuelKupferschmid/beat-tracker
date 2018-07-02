@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Eingang">
+    <Position X="1.802" Y="0.531" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Tracker">
+    <Position X="4.25" Y="0.5" Height="0.75" Width="3.315" />
+  </Comment>
+  <Comment CommentText="Ausgang">
+    <Position X="8.198" Y="0.521" Height="0.75" Width="1.7" />
+  </Comment>
+  <Class Name="BeatTracker.Readers.WaveSamples" Collapsed="true">
+    <Position X="1.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Readers\IWaveStreamReader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BeatTracker.Tracking.Tracker" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="6" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAEAQAGAAAAAAAAAAAAAACBAAAAAAIAAAAAADAAA=</HashCode>
+      <FileName>Tracking\Tracker.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BeatTracker.Writers.SynchronizingWriter" Collapsed="true">
+    <Position X="8.25" Y="2.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>BgAAAAEQAiAgAAAAwQQEAAQgAAAIAAAAIABBAAAIgAA=</HashCode>
+      <FileName>Writers\SynchronizingWriter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="BeatTracker.Readers.IWaveStreamReader" Collapsed="true">
+    <Position X="1.75" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAACAAAAAAAAAAAAAAAAAAACAAIAAAAAAAAAA=</HashCode>
+      <FileName>Readers\IWaveStreamReader.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BeatTracker.Tracking.ITracker" Collapsed="true">
+    <Position X="6" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Tracking\ITracker.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BeatTracker.Timers.IDateTime" Collapsed="true">
+    <Position X="4.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Timers\IDateTime.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BeatTracker.Timers.ITimer" Collapsed="true">
+    <Position X="8.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAQCAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Timers\ITimer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -13,7 +13,7 @@ namespace BeatTracker.Writers
 
         protected override void OnPulse()
         {
-            Console.WriteLine("foo..");
+            Console.WriteLine("Pulse");
         }
     }
 }
