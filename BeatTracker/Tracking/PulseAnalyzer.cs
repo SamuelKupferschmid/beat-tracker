@@ -153,6 +153,8 @@ namespace BeatTracker.Tracking
             var confidence = e[index];
             var bpm = _bpmFrequencies[index] * 60;
 
+            bpm /= 2.32f;
+
 #if DEBUG
             System.Diagnostics.Debug.Print($"BPM: {bpm:F} | Confidence: {confidence:F5}");
 #endif

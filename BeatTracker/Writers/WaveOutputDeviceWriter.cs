@@ -48,7 +48,7 @@ namespace BeatTracker.Writers
 
         public WaveFormat OutputWaveFormat => _device.OutputWaveFormat;
 
-        protected override void OnPulse()
+        protected override void OnPulse(BeatInfo info)
         {
             // Findings:
             // Does not work well when onPulseWaveDuration is greater than TimeSpan.FromSeconds(1 / bpm).

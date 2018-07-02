@@ -48,12 +48,12 @@ namespace BeatTracker.Tracking
 
         private void PulseAnalyzerOnPulseExtracted(object o, IEnumerable<(float bpm, float confidence)> candidates)
         {
-            var bpm = candidates.OrderByDescending(c => c.confidence).First().bpm;
+            var best = candidates.OrderByDescending(c => c.confidence).First();
 
             // ToDo: Calculate 'OccursAt' (DateTime)?
             var occursAt = _dateTime.Now;
 
-            OnBeatInfoChanged(new BeatInfo(bpm, occursAt));
+            OnBeatInfoChanged(new BeatInfo(best.bpm, occursAt, best.confidence));
         }
 
         protected virtual void OnBeatInfoChanged(BeatInfo e)
