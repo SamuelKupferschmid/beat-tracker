@@ -133,6 +133,12 @@ namespace BeatTracker.Tracking
 
             bpm /= 2.32f;
 
+            bpm /= 4;
+
+            while (bpm < 160)
+            {
+                bpm *= 2;
+            }
             System.Diagnostics.Debug.Print($"BPM: {bpm:F} | Confidence: {confidence:F5}");
 
             _outputLogger.AddSampe(e);
