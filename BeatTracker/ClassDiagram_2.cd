@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="BeatTracker.Readers.WaveSamples">
+    <Position X="1.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Readers\IWaveStreamReader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="BeatTracker.Readers.IWaveStreamReader">
+    <Position X="3.5" Y="2.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAACAAAAAAAAAAAAAAAAAAACAAIAAAAAAAAAA=</HashCode>
+      <FileName>Readers\IWaveStreamReader.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

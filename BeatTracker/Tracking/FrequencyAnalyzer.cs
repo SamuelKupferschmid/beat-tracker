@@ -31,7 +31,7 @@ namespace BeatTracker.Tracking
             int fftStepSize = 512;
 
             _transformer = new FFTransformer(fftWindowSize, fftStepSize, 0, 512);
-            //_transformer.UseWindow = true;
+            _transformer.UseWindow = true;
 
             _transformer.FrameAvailable += _transformer_FrameAvailable;
             _streamReader.DataAvailable += _streamReader_DataAvailable;
@@ -56,7 +56,8 @@ namespace BeatTracker.Tracking
 
             var noveltyCurve = e.Select(Math.Abs).Sum();
 
-            //counter++;
+            ++counter;
+
             //smoothedValue += noveltyCurve / smoothWindow;
 
             //if (counter > smoothWindow)

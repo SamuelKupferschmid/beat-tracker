@@ -16,6 +16,7 @@ namespace BeatTracker.Writers
         protected override void OnPulse(BeatInfo info)
         {
             Console.Beep(800,100);
+            Console.WriteLine("Pulse");
         }
     }
 }
