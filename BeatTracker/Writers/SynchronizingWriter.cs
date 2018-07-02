@@ -72,7 +72,7 @@ namespace BeatTracker.Writers
                     lock (_syncRoot)
                     {
                         if (copy == _currentBeatInfo)
-                            _currentBeatInfo = new BeatInfo(copy.Bpm, occursAt);
+                            _currentBeatInfo = new BeatInfo(copy.Bpm, occursAt, copy.Confidence);
                     }
                 }
 
@@ -93,7 +93,7 @@ namespace BeatTracker.Writers
             _timer.Stop();
         }
 
-        protected abstract void OnPulse();
+        protected abstract void OnPulse(BeatInfo info);
 
         private void Tracker_BeatInfoChanged(object sender, BeatInfo e)
         {
@@ -131,7 +131,7 @@ namespace BeatTracker.Writers
                 lock (_syncRoot)
                 {
                     if (_currentBeatInfo.Bpm > 0)
-                        _currentBeatInfo = new BeatInfo(_currentBeatInfo.Bpm, _currentBeatInfo.OccursAt + TimeSpan.FromMinutes(1 / _currentBeatInfo.Bpm));
+                        _currentBeatInfo = new BeatInfo(_currentBeatInfo.Bpm, _currentBeatInfo.OccursAt + TimeSpan.FromMinutes(1 / _currentBeatInfo.Bpm), _currentBeatInfo.Confidence);
                 }
 
 #if DEBUG
@@ -153,7 +153,7 @@ namespace BeatTracker.Writers
                     _lastOnPulseCallTime = _dateTime.Now;
 #endif
 
-                OnPulse();
+                OnPulse(_currentBeatInfo);
 
                 _recentOnPulseCallDurations.Push(sw.Elapsed.TotalMilliseconds);
             }

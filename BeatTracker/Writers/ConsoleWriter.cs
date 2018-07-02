@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Security.Principal;
 using BeatTracker.Timers;
 using BeatTracker.Tracking;
+using MathNet.Numerics;
 
 namespace BeatTracker.Writers
 {
@@ -11,9 +13,9 @@ namespace BeatTracker.Writers
         {
         }
 
-        protected override void OnPulse()
+        protected override void OnPulse(BeatInfo info)
         {
-            Console.WriteLine("foo..");
+            Console.Beep(800,100);
         }
     }
 }

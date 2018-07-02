@@ -10,13 +10,18 @@ namespace BeatTracker.Writers
     {
         protected readonly OutputDevice OutputDevice;
 
+        public MidiMetronomeWriter(ITracker tracker) : this(tracker, 0)
+        {
+
+        }
+
         public MidiMetronomeWriter(ITracker tracker, int deviceId)
             : base(tracker)
         {
             OutputDevice = new OutputDevice(deviceId);
         }
 
-        protected override void OnPulse()
+        protected override void OnPulse(BeatInfo info)
         {
             ChannelMessageBuilder builder = new ChannelMessageBuilder
             {

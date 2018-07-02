@@ -20,24 +20,9 @@ namespace BeatTracker.UI
 
         public PreprocessingVisualization()
         {
-            //** Pulse Block Start
-
-            //var pulseAnalyzer = new PulseAnalyzer();
-
-            //Task.Run(() =>
-            //{
-            //    var dir = @"C:\Program Files\MATLAB\R2016b\toolbox\tempogram\";
-            //    var file = "Debussy_SonataViolinPianoGMinor-02_111_20080519-SMD-ss135-189.wav.noveltycurve_padded";
-            //    var noveltyCurveExport = System.IO.File.ReadAllText(System.IO.Path.Combine(dir, file));
-            //    var noveltyCurveValues = noveltyCurveExport.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x)).ToList();
-            //    noveltyCurveValues.ForEach(x => pulseAnalyzer.AddFrame(x));
-            //});
-
-            //** Pulse Block End
-
-            var reader = new MonoWaveFileReader("data/110-130bpm_click_new.wav", isSourceStereo: false);
-
-            tracker = TrackerSetup.CreateWith<ConsoleWriter>(reader);
+            //var reader = new MonoWaveFileReader("data/110-130bpm_click.wav", isSourceStereo: false);
+            var reader = new WaveInputDeviceReader(0);
+            tracker = TrackerSetup.CreateWith<MidiMetronomeWriter>(reader);
 
             foreach (var inst in SpectrumLogger.Instances)
             {
