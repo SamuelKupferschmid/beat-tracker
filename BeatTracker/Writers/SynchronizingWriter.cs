@@ -38,6 +38,8 @@ namespace BeatTracker.Writers
             _timer.Elapsed += Timer_Elapsed;
         }
 
+        public TimeSpan Resolution { get; } = TimeSpan.FromMilliseconds(ResolutionInMilliseconds);
+
         public TimeSpan Offset { get; set; } = TimeSpan.Zero;
 
         public TimeSpan AverageOnPulseDuration => TimeSpan.FromMilliseconds(_recentOnPulseCallDurations.Average());
@@ -58,15 +60,12 @@ namespace BeatTracker.Writers
             {
                 var occursAt = copy.OccursAt;
                 var now = _dateTime.Now;
-                var internalOffset = InternalOffset;
 
-                var resolution = TimeSpan.FromMilliseconds(ResolutionInMilliseconds);
-
-                if ((now - (occursAt + Offset + internalOffset)) > resolution)
+                if ((now - (occursAt + Offset + InternalOffset)) > Resolution)
                 {
                     var bpm = TimeSpan.FromMinutes(1 / copy.Bpm);
 
-                    while (occursAt + Offset + internalOffset + resolution < now)
+                    while (occursAt + Offset + InternalOffset + Resolution < now)
                         occursAt += bpm;
 
                     lock (_syncRoot)
@@ -76,7 +75,7 @@ namespace BeatTracker.Writers
                     }
                 }
 
-                return (occursAt + Offset + internalOffset);
+                return (occursAt + Offset + InternalOffset);
             }
 
             // This causes OnPulse() to be never called.
@@ -97,9 +96,29 @@ namespace BeatTracker.Writers
 
         private void Tracker_BeatInfoChanged(object sender, BeatInfo e)
         {
-            lock (_syncRoot)
+            var copy = _currentBeatInfo;
+            var occursAt = e.OccursAt;
+
+            if (copy != null && copy.OccursAt > occursAt)
             {
-                _currentBeatInfo = e;
+                var now = _dateTime.Now;
+                var bpm = TimeSpan.FromMinutes(1 / copy.Bpm);
+
+                while (occursAt + Offset + InternalOffset + Resolution < now)
+                    occursAt += bpm;
+
+                lock (_syncRoot)
+                {
+                    if (copy == _currentBeatInfo)
+                        _currentBeatInfo = new BeatInfo(e.Bpm, occursAt, e.Confidence);
+                }
+            }
+            else
+            {
+                lock (_syncRoot)
+                {
+                    _currentBeatInfo = e;
+                }
             }
 
             if (!_timer.IsRunning)
@@ -110,7 +129,6 @@ namespace BeatTracker.Writers
         private DateTime? _lastOnPulseCallTime;
         private int _onPulseCallCount;
         private int _onPulseSkipCount;
-        private DateTime _elapsed;
 #endif
 
         private void Timer_Elapsed(object sender, EventArgs e)
@@ -119,12 +137,6 @@ namespace BeatTracker.Writers
 
             var callOnPulseAt = GetNextOnPulseCallTime();
             var offset = Math.Abs((_dateTime.Now - callOnPulseAt).TotalMilliseconds);
-
-#if DEBUG
-            //System.Diagnostics.Debug.Print($"Offset: {offset:F}ms | CallOnPulseAt: {callOnPulseAt:HH:mm:ss.ffff} ");            
-            //System.Diagnostics.Debug.Print($"Elapsed: {(_dateTime.Now - _elapsed).TotalMilliseconds:F}ms.");
-            //_elapsed = _dateTime.Now;
-#endif
 
             if (offset < ResolutionInMilliseconds)
             {

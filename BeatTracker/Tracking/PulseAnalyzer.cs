@@ -44,11 +44,11 @@ namespace BeatTracker.Tracking
 
             // ** Initialize BufferedTransformer
 
-            //var audioSampleRate = 22050; // Mono 22.05 KHz
-            //var frequencyAnalyzerStepSize = 512;
-            //_featureRate = audioSampleRate / (float)frequencyAnalyzerStepSize;
+            var audioSampleRate = 22050; // Mono 22.05 KHz
+            var frequencyAnalyzerStepSize = 512;
+            _featureRate = audioSampleRate / (float)frequencyAnalyzerStepSize;
 
-            _featureRate = 200;
+            //_featureRate = 200;
             var fftWindowSize = 6 * _featureRate; // 6 Seconds
             var fftStepSize = Math.Ceiling(_featureRate / 5);
 
@@ -153,7 +153,7 @@ namespace BeatTracker.Tracking
             var confidence = e[index];
             var bpm = _bpmFrequencies[index] * 60;
 
-            bpm /= 2.32f;
+            //bpm /= 2.32f;
 
 #if DEBUG
             System.Diagnostics.Debug.Print($"BPM: {bpm:F} | Confidence: {confidence:F5}");
