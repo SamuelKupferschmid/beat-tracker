@@ -27,7 +27,7 @@ namespace BeatTracker.Test.Writers
 
         public int OnPulseActionCallCount => _onPulseActionCallCount;
 
-        protected override void OnPulse()
+        protected override void OnPulse(BeatInfo info)
         {            
             _onPulseAction?.Invoke();
             ++_onPulseActionCallCount;

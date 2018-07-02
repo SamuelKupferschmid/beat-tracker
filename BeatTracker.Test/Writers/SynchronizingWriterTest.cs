@@ -57,7 +57,7 @@ namespace BeatTracker.Test.Writers
             var dateTime = new HighResolutionDateTime();
             var writer = new MockSynchronizingWriter(tracker, timer, dateTime);
 
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(100, dateTime.Now));
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(100, dateTime.Now, 1));
 
             var sw = Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < 5)
@@ -82,7 +82,7 @@ namespace BeatTracker.Test.Writers
 
             double bpm = 1000;
 
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now, 1));
 
             var sw = Stopwatch.StartNew();
 
@@ -124,7 +124,7 @@ namespace BeatTracker.Test.Writers
             var writer = new MockSynchronizingWriter(tracker, timer, dateTime, onPulseAction);                                    
             writer.Offset = TimeSpan.FromMilliseconds(150);
                         
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now, 1));
 
             sw = Stopwatch.StartNew();
 
@@ -156,7 +156,7 @@ namespace BeatTracker.Test.Writers
 
             var writer = new MockSynchronizingWriter(tracker, timer, dateTime, onPulseAction);
             
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now, 1));
 
             var sw = Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < 10)
@@ -192,7 +192,7 @@ namespace BeatTracker.Test.Writers
             var random = new Random();
             double bpm = 1000;
 
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now, 1));
 
             var sw = Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < 30)
@@ -249,7 +249,7 @@ namespace BeatTracker.Test.Writers
 
             var writer = new MockSynchronizingWriter(tracker, timer, dateTime, onPulseAction);
 
-            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now));
+            tracker.BeatInfoChanged += Raise.With(new BeatInfo(bpm, dateTime.Now, 1));
 
             var sw = Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < runTimeInSeconds)
