@@ -90,9 +90,11 @@ namespace BeatTracker.Tracking
                 transformedVector[f] = (float)(magnitude * _windowNormalizeFactor);
             }
 
-            transformedVector = transformedVector.Normalize(2);
+            //transformedVector = transformedVector.Normalize(2);
 
-            return transformedVector.AsArray();
+            var arr = transformedVector.AsArray();
+
+            return arr;
         }
 
         private Matrix<float> _DFT_Cos_Matrix;
@@ -160,11 +162,12 @@ namespace BeatTracker.Tracking
 
             //bpm /= 4;
 
-            //while (bpm < 160)
-            //{
-            //    bpm *= 2;
-            //}
-                        
+            bpm /= 4;
+
+            while (bpm < 80)
+            {
+                bpm *= 2;
+            }
 #if DEBUG
             System.Diagnostics.Debug.Print($"BPM: {bpm:F} | Confidence: {confidence:F5}");
 #endif
@@ -184,11 +187,11 @@ namespace BeatTracker.Tracking
         }
 
         private int GetMaxFreqIndex(float[] e)
-        {
+       {
             int freqIndex = 0;
             float confidence = 0;
 
-            for (int i = BpmRangeMin - 30; i < BpmRangeMax - 30; i++)
+            for (int i = 0; i < e.Length; i++)
             {
                 if (e[i] > confidence)
                 {

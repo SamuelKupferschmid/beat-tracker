@@ -96,6 +96,9 @@ namespace BeatTracker.Writers
 
         private void Tracker_BeatInfoChanged(object sender, BeatInfo e)
         {
+            if (_currentBeatInfo != null && (Math.Abs(_currentBeatInfo.Bpm - e.Bpm) / _currentBeatInfo.Bpm < 0.05))
+                return;
+
             var copy = _currentBeatInfo;
             var occursAt = e.OccursAt;
 

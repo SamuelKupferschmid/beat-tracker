@@ -60,16 +60,9 @@ namespace BeatTracker.Writers
 
         protected override async void OnPulse(BeatInfo info)
         {
-            await Task.Run(() =>
-            {
-                OutputDevice.Send(this.hihat.Result);
-            });
-
-            //var mod = _index++ % 8;
+            OutputDevice.Send(this.hihat.Result);
 
             //int volume = (int)(info.Confidence - 80 * 0.3).Clamp(0, 127.999);
-
-            //int volume = 50;
 
             //this.kick.Data2 = volume;
             //this.snare.Data2 = volume;
