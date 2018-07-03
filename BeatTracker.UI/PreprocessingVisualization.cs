@@ -27,6 +27,8 @@ namespace BeatTracker.UI
 
             foreach (var inst in SpectrumLogger.Instances)
             {
+                continue;
+
                 var form = new SpectrumVisualization { Text = inst.Name };
                 inst.OnFrame += form.AddFrame;
                 form.Show();
