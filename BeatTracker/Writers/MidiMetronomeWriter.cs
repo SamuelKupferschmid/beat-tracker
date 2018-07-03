@@ -60,7 +60,7 @@ namespace BeatTracker.Writers
 
         protected override async void OnPulse(BeatInfo info)
         {
-            OutputDevice.Send(this.hihat.Result);
+            OutputDevice?.Send(this.hihat.Result);
 
             //int volume = (int)(info.Confidence - 80 * 0.3).Clamp(0, 127.999);
 
@@ -82,6 +82,7 @@ namespace BeatTracker.Writers
         public void Dispose()
         {
             OutputDevice?.Dispose();
+            OutputDevice = null;
         }
     }
 }

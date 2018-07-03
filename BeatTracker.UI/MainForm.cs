@@ -80,7 +80,7 @@ namespace BeatTracker.UI
             _reader = new WaveInputDeviceReader(0);
             _tracker = new Tracker(_reader);
             _visualWriter = new VisualWriter(this, _tracker);
-            //_midiMetronomeWriter = new MidiMetronomeWriter(_tracker, 0);
+            _midiMetronomeWriter = new MidiMetronomeWriter(_tracker, 0);
                         
             _stopwatch = Stopwatch.StartNew();
             _visualWriter.Start();
