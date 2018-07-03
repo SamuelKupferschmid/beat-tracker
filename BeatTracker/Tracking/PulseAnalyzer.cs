@@ -28,6 +28,9 @@ namespace BeatTracker.Tracking
 
         private readonly float _featureRate;
 
+        public const int BpmRangeMin = 80;
+        public const int BpmRangeMax = 240;
+
         public PulseAnalyzer()
         {
             // ** Initialize BPM Frequency Range
@@ -155,12 +158,13 @@ namespace BeatTracker.Tracking
 
             //bpm /= 2.32f;
 
-            bpm /= 4;
+            //bpm /= 4;
 
-            while (bpm < 160)
-            {
-                bpm *= 2;
-            }
+            //while (bpm < 160)
+            //{
+            //    bpm *= 2;
+            //}
+                        
 #if DEBUG
             System.Diagnostics.Debug.Print($"BPM: {bpm:F} | Confidence: {confidence:F5}");
 #endif
@@ -184,7 +188,7 @@ namespace BeatTracker.Tracking
             int freqIndex = 0;
             float confidence = 0;
 
-            for (int i = 0; i < e.Length; i++)
+            for (int i = BpmRangeMin - 30; i < BpmRangeMax - 30; i++)
             {
                 if (e[i] > confidence)
                 {

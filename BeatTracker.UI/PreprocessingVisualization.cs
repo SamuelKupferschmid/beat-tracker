@@ -21,6 +21,7 @@ namespace BeatTracker.UI
         public PreprocessingVisualization()
         {
             //var reader = new MonoWaveFileReader("data/110-130bpm_click.wav", isSourceStereo: false);
+            //var reader = new MonoWaveFileReader("data/Albums-Ballroom_Classics4-01.wav", isSourceStereo: false);
             var reader = new WaveInputDeviceReader(0);
             tracker = TrackerSetup.CreateWith<MidiMetronomeWriter>(reader);
 

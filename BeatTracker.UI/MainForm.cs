@@ -70,7 +70,14 @@ namespace BeatTracker.UI
             btnStart.Enabled = false;
             btnStop.Enabled = true;
 
-            _reader = new MonoWaveFileReader("data/110-130bpm_click.wav", isSourceStereo: false);
+            _reader = new MonoWaveFileReader("data/Media-103516.wav", isSourceStereo: false);
+
+
+            //_reader = new MonoWaveFileReader("data/110-130bpm_click.wav", isSourceStereo: false);
+
+            //_reader = new MonoWaveFileReader("data/Albums-Ballroom_Classics4-01.wav", isSourceStereo: false);
+
+            //_reader = new WaveInputDeviceReader(0);
             _tracker = new Tracker(_reader);
             _visualWriter = new VisualWriter(this, _tracker);
             //_midiMetronomeWriter = new MidiMetronomeWriter(_tracker, 0);
@@ -78,6 +85,7 @@ namespace BeatTracker.UI
             _stopwatch = Stopwatch.StartNew();
             _visualWriter.Start();
             //_midiMetronomeWriter.Start();
+            //_reader.Start();
             _reader.Start(simulatePlaybackspeed: true);
 
             await Task.Delay(TimeSpan.FromSeconds(60)).ContinueWith(task =>

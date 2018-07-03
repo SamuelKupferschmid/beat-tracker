@@ -63,10 +63,12 @@ namespace BeatTracker.Readers
 
                 timer.AutoReset = true;
 
-                if (_isSourceStereo)
-                    timer.Interval = 44100d / _BufferSize;
-                else
-                    timer.Interval = 22050d / _BufferSize;
+                //if (_isSourceStereo)
+                //    timer.Interval = 44100d / _BufferSize;
+                //else
+                //    timer.Interval = 22050d / _BufferSize;
+
+                timer.Interval = 22050d / _BufferSize;
 
                 timer.Start();
             }

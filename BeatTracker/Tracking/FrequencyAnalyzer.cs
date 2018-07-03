@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BeatTracker.Readers;
 using BeatTracker.Utils;
+using MathNet.Numerics.Interpolation;
 using MathNet.Numerics.Statistics;
 using NAudio.Utils;
 using NAudio.Wave;
@@ -46,6 +47,8 @@ namespace BeatTracker.Tracking
 
         private readonly Queue<double> buffer = new Queue<double>(8);
 
+        private float compression = 1000;
+
         private int counter = 0;
         private float smoothedValue = 0;
         private float smoothWindow = 50;
@@ -53,6 +56,29 @@ namespace BeatTracker.Tracking
         private void _transformer_FrameAvailable(object sender, float[] e)
         {
             _inputLogger.AddSampe(e);
+
+            /*
+                % normalize and convert to dB
+                specData = specData./max(max(specData));
+                thresh = -74; % dB
+                thresh = 10^(thresh./20);
+                specData = (max(specData,thresh));
+             */
+
+            //var thresh = -74f; // dB
+            //thresh = (float)Math.Pow(10, thresh / 20);
+
+            //var max = e.Max();
+            //var x = new float[e.Length];
+            //var y = new float[e.Length];
+            //for (int i = 0; i < e.Length; i++)
+            //{
+            //    x[i] = i;
+            //    y[i] = (float)(Math.Log(1 + Math.Max(e[i] / max, thresh) * compression) / Math.Log(1 + compression));
+            //}
+
+
+            //_inputLogger.AddSampe(y);
 
             var noveltyCurve = e.Select(Math.Abs).Sum();
 
@@ -67,7 +93,7 @@ namespace BeatTracker.Tracking
 
             //noveltyCurve -= smoothedValue;
 
-            var log = new float[200];
+            var log = new float[300];
 
             log[(int)noveltyCurve.Clamp(0, float.MaxValue)] = 1;
             _outputLogger.AddSampe(log);

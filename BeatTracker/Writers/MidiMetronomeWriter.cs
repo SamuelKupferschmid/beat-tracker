@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using BeatTracker.Timers;
 using BeatTracker.Tracking;
 using BeatTracker.Utils;
@@ -10,6 +11,7 @@ namespace BeatTracker.Writers
     public class MidiMetronomeWriter : SynchronizingWriter, IDisposable
     {
         protected readonly OutputDevice OutputDevice;
+
         private readonly ChannelMessageBuilder kick;
         private readonly ChannelMessageBuilder snare;
         private readonly ChannelMessageBuilder hihat;
@@ -20,6 +22,13 @@ namespace BeatTracker.Writers
 
         public MidiMetronomeWriter(ITracker tracker) : this(tracker, 0)
         {
+        }
+
+        public MidiMetronomeWriter(ITracker tracker, int deviceId)
+            : base(tracker)
+        {
+            OutputDevice = new OutputDevice(deviceId);
+
             this.kick = new ChannelMessageBuilder
             {
                 Command = ChannelCommand.NoteOn,
@@ -47,33 +56,34 @@ namespace BeatTracker.Writers
             this.hihat.Build();
         }
 
-        public MidiMetronomeWriter(ITracker tracker, int deviceId)
-            : base(tracker)
-        {
-            OutputDevice = new OutputDevice(deviceId);
-        }
-
         private int _index = 0;
 
-        protected override void OnPulse(BeatInfo info)
+        protected override async void OnPulse(BeatInfo info)
         {
-            var mod = _index++ % 8;
+            await Task.Run(() =>
+            {
+                OutputDevice.Send(this.hihat.Result);
+            });
 
-            int volume = (int)(info.Confidence - 80 * 0.3).Clamp(0, 127.999);
+            //var mod = _index++ % 8;
 
-            this.kick.Data2 = volume;
-            this.snare.Data2 = volume;
-            this.hihat.Data2 = volume;
-            this.kick.Build();
-            this.snare.Build();
-            this.hihat.Build();
+            //int volume = (int)(info.Confidence - 80 * 0.3).Clamp(0, 127.999);
 
-            if (_kickNotes[mod])
-               OutputDevice.Send(this.kick.Result);
-            if (_snarekNotes[mod])
-                OutputDevice.Send(this.snare.Result);
-            if (_hihatNotes[mod])
-               OutputDevice.Send(this.hihat.Result);
+            //int volume = 50;
+
+            //this.kick.Data2 = volume;
+            //this.snare.Data2 = volume;
+            //this.hihat.Data2 = volume;
+            //this.kick.Build();
+            //this.snare.Build();
+            //this.hihat.Build();
+
+            //if (_kickNotes[mod])
+            //   OutputDevice.Send(this.kick.Result);
+            //if (_snarekNotes[mod])
+            //    OutputDevice.Send(this.snare.Result);
+            //if (_hihatNotes[mod])
+            //   OutputDevice.Send(this.hihat.Result);
         }
 
         public void Dispose()
