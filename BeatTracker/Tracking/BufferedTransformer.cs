@@ -72,7 +72,7 @@ namespace BeatTracker.Tracking
                     var window = new float[_windowSize];
                     Array.Copy(_windowBuffer, _stepBuffer.Length, window, 0, _windowSize - _stepBuffer.Length);
                     Array.Copy(_stepBuffer, 0, window, _windowSize - _stepBuffer.Length, _stepBuffer.Length);
-
+                    
                     if (_totalProcessed >= _windowSize)
                     {
                         CopyAndTransform(window);
