@@ -59,7 +59,7 @@ namespace BeatTracker.Writers
         {
             var mod = _index++ % 8;
 
-            int volume = (int)(info.Confidence - 80 * 0.3).Clamp(0, 127.999);
+            int volume = 127;//(int)(info.Confidence - 80 * 0.3).Clamp(0, 127.999);
 
             this.kick.Data2 = volume;
             this.snare.Data2 = volume;
@@ -68,11 +68,11 @@ namespace BeatTracker.Writers
             this.snare.Build();
             this.hihat.Build();
 
-            if (_kickNotes[mod])
+            /*if (_kickNotes[mod])
                OutputDevice.Send(this.kick.Result);
             if (_snarekNotes[mod])
                 OutputDevice.Send(this.snare.Result);
-            if (_hihatNotes[mod])
+            if (_hihatNotes[mod])*/
                OutputDevice.Send(this.hihat.Result);
         }
 

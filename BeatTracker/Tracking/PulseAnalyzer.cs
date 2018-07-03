@@ -44,11 +44,11 @@ namespace BeatTracker.Tracking
 
             // ** Initialize BufferedTransformer
 
-            //var audioSampleRate = 22050; // Mono 22.05 KHz
-            //var frequencyAnalyzerStepSize = 512;
-            //_featureRate = audioSampleRate / (float)frequencyAnalyzerStepSize;
+            var audioSampleRate = 22050; // Mono 22.05 KHz
+            var frequencyAnalyzerStepSize = 512;
+            _featureRate = audioSampleRate / (float)frequencyAnalyzerStepSize;
 
-            _featureRate = 200;
+            //_featureRate = 200;
             var fftWindowSize = 6 * _featureRate; // 6 Seconds
             var fftStepSize = Math.Ceiling(_featureRate / 5);
 
@@ -87,9 +87,11 @@ namespace BeatTracker.Tracking
                 transformedVector[f] = (float)(magnitude * _windowNormalizeFactor);
             }
 
-            transformedVector = transformedVector.Normalize(2);
+            //transformedVector = transformedVector.Normalize(2);
 
-            return transformedVector.AsArray();
+            var arr = transformedVector.AsArray();
+
+            return arr;
         }
 
         private Matrix<float> _DFT_Cos_Matrix;
@@ -153,11 +155,11 @@ namespace BeatTracker.Tracking
             var confidence = e[index];
             var bpm = _bpmFrequencies[index] * 60;
 
-            bpm /= 2.32f;
+            //bpm /= 2.32f;
 
             bpm /= 4;
 
-            while (bpm < 160)
+            while (bpm < 80)
             {
                 bpm *= 2;
             }
@@ -180,11 +182,12 @@ namespace BeatTracker.Tracking
         }
 
         private int GetMaxFreqIndex(float[] e)
-        {
+       {
             int freqIndex = 0;
             float confidence = 0;
-
-            for (int i = 0; i < e.Length; i++)
+            int min = 80;
+            int max = 180;
+            for (int i = min - 30; i < max - 30; i++)
             {
                 if (e[i] > confidence)
                 {
