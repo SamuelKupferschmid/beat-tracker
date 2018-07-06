@@ -10,7 +10,7 @@ namespace BeatTracker.Writers
 {
     public class MidiMetronomeWriter : SynchronizingWriter, IDisposable
     {
-        protected readonly OutputDevice OutputDevice;
+        protected OutputDevice OutputDevice;
 
         private readonly ChannelMessageBuilder kick;
         private readonly ChannelMessageBuilder snare;
@@ -60,7 +60,10 @@ namespace BeatTracker.Writers
 
         protected override async void OnPulse(BeatInfo info)
         {
-            OutputDevice?.Send(this.hihat.Result);
+            if (!OutputDevice.IsDisposed)
+            {
+                OutputDevice?.Send(this.hihat.Result);
+            }
 
             //int volume = (int)(info.Confidence - 80 * 0.3).Clamp(0, 127.999);
 
@@ -82,7 +85,6 @@ namespace BeatTracker.Writers
         public void Dispose()
         {
             OutputDevice?.Dispose();
-            OutputDevice = null;
         }
     }
 }
