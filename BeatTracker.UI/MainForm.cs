@@ -45,7 +45,8 @@ namespace BeatTracker.UI
             }
         }
 
-        WaveInputDeviceReader _reader;
+        IWaveStreamReader _reader;
+
         ITracker _tracker;
         VisualWriter _visualWriter;
         MidiMetronomeWriter _midiMetronomeWriter;
@@ -69,12 +70,8 @@ namespace BeatTracker.UI
         {
             btnStart.Enabled = false;
             btnStop.Enabled = true;
-
-            //_reader = new MonoWaveFileReader("data/Media-103516.wav", isSourceStereo: false);
-
-
+                        
             //_reader = new MonoWaveFileReader("data/110-130bpm_click.wav", isSourceStereo: false);
-
             //_reader = new MonoWaveFileReader("data/Albums-Ballroom_Classics4-01.wav", isSourceStereo: false);
 
             _reader = new WaveInputDeviceReader(0);
@@ -86,7 +83,8 @@ namespace BeatTracker.UI
             _visualWriter.Start();
             _midiMetronomeWriter.Start();
             _reader.Start();
-            //_reader.Start(simulatePlaybackspeed: true);
+
+            //((MonoWaveFileReader)_reader).Start(simulatePlaybackspeed: true);
         }
 
         private void BtnStop_Click(object sender, EventArgs e)

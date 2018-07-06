@@ -107,6 +107,7 @@
     <Content Include="data\ag1.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\Albums-Ballroom_Classics4-01.wav" />
     <Content Include="data\Boom-Kick.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
