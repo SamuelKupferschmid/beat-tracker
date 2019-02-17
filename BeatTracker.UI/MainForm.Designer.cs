@@ -32,10 +32,10 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.lblBPM = new System.Windows.Forms.Label();
             this.grpAusgabe = new System.Windows.Forms.GroupBox();
+            this.pnlCircle = new System.Windows.Forms.Panel();
+            this.lblConfidence = new System.Windows.Forms.Label();
             this.grpSteuerung = new System.Windows.Forms.GroupBox();
             this.lblLaufzeit = new System.Windows.Forms.Label();
-            this.lblConfidence = new System.Windows.Forms.Label();
-            this.pnlCircle = new System.Windows.Forms.Panel();
             this.grpAusgabe.SuspendLayout();
             this.grpSteuerung.SuspendLayout();
             this.SuspendLayout();
@@ -81,6 +81,24 @@
             this.grpAusgabe.TabStop = false;
             this.grpAusgabe.Text = "Ausgabe";
             // 
+            // pnlCircle
+            // 
+            this.pnlCircle.Location = new System.Drawing.Point(13, 94);
+            this.pnlCircle.Name = "pnlCircle";
+            this.pnlCircle.Size = new System.Drawing.Size(388, 225);
+            this.pnlCircle.TabIndex = 4;
+            // 
+            // lblConfidence
+            // 
+            this.lblConfidence.AutoSize = true;
+            this.lblConfidence.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblConfidence.Location = new System.Drawing.Point(6, 53);
+            this.lblConfidence.Name = "lblConfidence";
+            this.lblConfidence.Size = new System.Drawing.Size(121, 26);
+            this.lblConfidence.TabIndex = 3;
+            this.lblConfidence.Tag = "";
+            this.lblConfidence.Text = "Konfidenz: ";
+            // 
             // grpSteuerung
             // 
             this.grpSteuerung.Controls.Add(this.lblLaufzeit);
@@ -103,24 +121,6 @@
             this.lblLaufzeit.Tag = "Laufzeit: {0}";
             this.lblLaufzeit.Text = "Laufzeit: ";
             // 
-            // lblConfidence
-            // 
-            this.lblConfidence.AutoSize = true;
-            this.lblConfidence.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblConfidence.Location = new System.Drawing.Point(6, 53);
-            this.lblConfidence.Name = "lblConfidence";
-            this.lblConfidence.Size = new System.Drawing.Size(121, 26);
-            this.lblConfidence.TabIndex = 3;
-            this.lblConfidence.Tag = "";
-            this.lblConfidence.Text = "Konfidenz: ";
-            // 
-            // pnlCircle
-            // 
-            this.pnlCircle.Location = new System.Drawing.Point(13, 94);
-            this.pnlCircle.Name = "pnlCircle";
-            this.pnlCircle.Size = new System.Drawing.Size(388, 225);
-            this.pnlCircle.TabIndex = 4;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -133,7 +133,7 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(445, 447);
             this.Name = "MainForm";
-            this.Text = "FHNW - IP5 FS18 - Beat Tracker";
+            this.Text = "FHNW - IP6 FS19 - Real Time Beat Tracker";
             this.grpAusgabe.ResumeLayout(false);
             this.grpAusgabe.PerformLayout();
             this.grpSteuerung.ResumeLayout(false);
