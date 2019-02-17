@@ -53,7 +53,7 @@ namespace BeatTracker.DFTPrototype
         protected virtual void OnBeatInfoChanged(BeatInfo e)
         {
             if (BeatInfo == null
-                || Math.Abs(BeatInfo.Bpm - e.Bpm) > 3)
+                || Math.Abs(BeatInfo.Bpm - e.Bpm) > 1)
             {
                 BeatInfo = e;
                 BeatInfoChanged?.Invoke(this, e);

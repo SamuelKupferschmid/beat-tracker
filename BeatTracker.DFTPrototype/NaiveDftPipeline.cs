@@ -78,7 +78,7 @@ namespace BeatTracker.DFTPrototype
             var tempogramBufferSize = (int)Math.Ceiling(tempogramWindowLength * _featureRate);
             var tempogramStepSize = (int)Math.Ceiling(_featureRate / 5);
 
-            _tempogramCreator = new Tempogram(tempogramBufferSize, tempogramStepSize, _featureRate , minBpm: 30, maxBpm: 300);
+            _tempogramCreator = new Tempogram(tempogramBufferSize, tempogramStepSize, _featureRate , minBpm: 30, maxBpm: 600);
 
             _tempogramBuffer = new DataBuffer<float>(tempogramBufferSize, tempogramStepSize);
             _tempogramBuffer.NextFrame += TempogramBuffer_NextFrame;
@@ -102,6 +102,12 @@ namespace BeatTracker.DFTPrototype
 
             var spec = Spectrogram.ToMagnitudeSpectrogram(data);
             spec = NoveltyCurve.Preprocess(spec);
+
+            //var amplifyToFreq = 6000f; // > 6000 Hz
+            //var index = (int)Math.Ceiling((float)spec.Length / (_sampleRate / 2) * amplifyToFreq);
+
+            //for (int i = index; i < spec.Length; i++)
+            //    spec[i] *= 1.25f;
 
             if (LOG)
                 _fftLogger.AddSampe(spec);
@@ -157,9 +163,9 @@ namespace BeatTracker.DFTPrototype
         private long tempogramCount = 0;
 
         private BeatInfo _currentBpm;
-        private float _beatConfidenceThreshold = 0.75f;
-        private float _bpmConfidenceThreshold = 0.15f;
-        private float _similarityThreshold = 0.025f;
+        private float _beatConfidenceThreshold = 0.85f;
+        private float _bpmConfidenceThreshold = 0.10f;
+        private float _similarityThreshold = 0.05f;
 
         private bool IsSimilarBpm(double bpm1, double bpm2)
         {
@@ -168,9 +174,6 @@ namespace BeatTracker.DFTPrototype
 
             var small = bpm1 < bpm2 ? bpm1 : bpm2;
             var big = bpm1 > bpm2 ? bpm1 : bpm2;
-
-            while (small > 60)
-                small /= 2;
 
             while (big / 2 > small)
                 big /= 2;
@@ -186,6 +189,9 @@ namespace BeatTracker.DFTPrototype
 
             if (LOG)
                 _tempogramLogger.AddSampe(tempogram.Select(c => c.Magnitude).ToArray());
+
+            // ToDo - Confidence Schwellwert automatisch anpassen
+            // ToDo - hervorheben der Freq-Bänder oder bandwise processing?
 
             //Console.WriteLine($"BPM (previous):{_currentBpm?.Bpm} | BPM (current):{bestBpm.Bpm}");
             //_currentBpm = bestBpm;
@@ -214,6 +220,7 @@ namespace BeatTracker.DFTPrototype
                 || ((Math.Abs(_currentBpm.Confidence - bestBpm.Confidence) / _currentBpm.Confidence) > _bpmConfidenceThreshold
                     && !IsSimilarBpm(_currentBpm.Bpm, bestBpm.Bpm)))
             {
+                Console.WriteLine($"BPM (previous):{_currentBpm?.Bpm} {_currentBpm?.Confidence:F4} | BPM (current):{bestBpm.Bpm} {bestBpm.Confidence:F4}");
                 _currentBpm = bestBpm;
                 // _aggregator.Clear();
             }
@@ -250,7 +257,7 @@ namespace BeatTracker.DFTPrototype
                     var offset = TimeSpan.FromSeconds((double)((_aggregator.TotalProcessed - _aggregator.StepSize + i) / _tempogramCreator.FeatureRate));
                     var occursAt = _startDateTime.Value + offset;
 
-                    //Console.WriteLine($"BPM:{bpm} | Confidence:{current}  | Occurs at:{occursAt} | Delay:{_dateTime.Now - occursAt}");
+                    Console.WriteLine($"BPM:{bpm} | Confidence:{current}  | Occurs at:{occursAt} | Delay:{_dateTime.Now - occursAt}");
                     BeatIdentified?.Invoke(new BeatInfo(bpm, occursAt, current));
                 }
 
