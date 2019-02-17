@@ -92,6 +92,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BeatTracker.DFTPrototype\BeatTracker.DFTPrototype.csproj">
+      <Project>{052e6349-f160-4a9c-acf5-7f12a0024473}</Project>
+      <Name>BeatTracker.DFTPrototype</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BeatTracker\BeatTracker.csproj">
       <Project>{A2A397BE-184B-492B-A592-760ABC3DEA14}</Project>
       <Name>BeatTracker</Name>

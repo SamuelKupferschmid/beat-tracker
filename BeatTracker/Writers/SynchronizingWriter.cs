@@ -96,8 +96,8 @@ namespace BeatTracker.Writers
 
         private void Tracker_BeatInfoChanged(object sender, BeatInfo e)
         {
-            if (_currentBeatInfo != null && (Math.Abs(_currentBeatInfo.Bpm - e.Bpm) / _currentBeatInfo.Bpm < 0.05))
-                return;
+            //if (_currentBeatInfo != null && (Math.Abs(_currentBeatInfo.Bpm - e.Bpm) / _currentBeatInfo.Bpm < 0.05))
+            //    return;
 
             var copy = _currentBeatInfo;
             var occursAt = e.OccursAt;
@@ -162,7 +162,7 @@ namespace BeatTracker.Writers
 
                     _onPulseSkipCount += (int)Math.Round(off / bpm.TotalMilliseconds);
 
-                    System.Diagnostics.Debug.Print($"OnPulse: {_dateTime.Now:HH:mm:ss.ffff} | Diff: {diff.TotalMilliseconds:F}ms | Off: {off:F3}ms | Skip % ({_onPulseSkipCount}/{_onPulseSkipCount + _onPulseCallCount}): {(double)_onPulseSkipCount / (_onPulseSkipCount + _onPulseCallCount) * 100:F}.");
+                    //System.Diagnostics.Debug.Print($"OnPulse: {_dateTime.Now:HH:mm:ss.ffff} | Diff: {diff.TotalMilliseconds:F}ms | Off: {off:F3}ms | Skip % ({_onPulseSkipCount}/{_onPulseSkipCount + _onPulseCallCount}): {(double)_onPulseSkipCount / (_onPulseSkipCount + _onPulseCallCount) * 100:F}.");
                 }
                 else
                     _lastOnPulseCallTime = _dateTime.Now;

@@ -1,4 +1,5 @@
-﻿using BeatTracker.Helpers;
+﻿using BeatTracker.DFTPrototype;
+using BeatTracker.Helpers;
 using BeatTracker.Readers;
 using BeatTracker.Tracking;
 using BeatTracker.Writers;
@@ -32,7 +33,7 @@ namespace BeatTracker.UI
                 {
                     _mainForm.lblLaufzeit.Text = $"Laufzeit: {_mainForm._stopwatch.Elapsed}";
                     _mainForm.lblBPM.Text = $"Aktuelle BPM: {info.Bpm:F2}";
-                    _mainForm.lblConfidence.Text = $"Konfidenz: {(info.Confidence * 100):F2}";
+                    _mainForm.lblConfidence.Text = $"Konfidenz: {info.Confidence:F2}";
                     _mainForm.pnlCircle.BackColor = Color.Red;
                     await Task.Delay(150).ContinueWith(task =>
                     {
@@ -75,13 +76,13 @@ namespace BeatTracker.UI
             //_reader = new MonoWaveFileReader("data/Albums-Ballroom_Classics4-01.wav", isSourceStereo: false);
 
             _reader = new WaveInputDeviceReader(0);
-            _tracker = new Tracker(_reader);
+            _tracker = new DftTracker(_reader);
             _visualWriter = new VisualWriter(this, _tracker);
-            _midiMetronomeWriter = new MidiMetronomeWriter(_tracker, 0);
+            //_midiMetronomeWriter = new MidiMetronomeWriter(_tracker, 0);
                         
             _stopwatch = Stopwatch.StartNew();
             _visualWriter.Start();
-            _midiMetronomeWriter.Start();
+            //_midiMetronomeWriter.Start();
             _reader.Start();
 
             //((MonoWaveFileReader)_reader).Start(simulatePlaybackspeed: true);

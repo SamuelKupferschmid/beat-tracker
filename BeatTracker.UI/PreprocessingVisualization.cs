@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BeatTracker.DFTPrototype;
 using BeatTracker.Readers;
 using BeatTracker.Timers;
 using BeatTracker.Tracking;
@@ -22,8 +23,11 @@ namespace BeatTracker.UI
         {
             //var reader = new MonoWaveFileReader("data/110-130bpm_click.wav", isSourceStereo: false);
             //var reader = new MonoWaveFileReader("data/Albums-Ballroom_Classics4-01.wav", isSourceStereo: false);
-            var reader = new WaveInputDeviceReader(0);
-            tracker = TrackerSetup.CreateWith<MidiMetronomeWriter>(reader);
+            //var reader = new WaveInputDeviceReader(0);
+            //tracker = TrackerSetup.CreateWith<MidiMetronomeWriter>(reader);
+
+            var _reader = new WaveInputDeviceReader(0);
+            var _tracker = new DftTracker(_reader);
 
             foreach (var inst in SpectrumLogger.Instances)
             {
@@ -39,7 +43,7 @@ namespace BeatTracker.UI
                 };
             }
 
-            thread = new Thread(tracker.Start);
+            thread = new Thread(_tracker.Start);
             thread.Start();
         }
 

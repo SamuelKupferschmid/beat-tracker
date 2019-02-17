@@ -16,7 +16,9 @@ namespace BeatTracker.UI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new PreprocessingVisualization());
+
+            // Application.Run(new PreprocessingVisualization());
+
             Application.Run(new MainForm());
         }
     }

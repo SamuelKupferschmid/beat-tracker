@@ -22,7 +22,7 @@ namespace BeatTracker.Readers
         {
             _stream = stream;
             _reader = new WaveFileReader(stream);
-            
+
             _isSourceStereo = isSourceStereo;
 
             if (_isSourceStereo)
