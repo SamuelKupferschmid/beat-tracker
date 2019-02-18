@@ -17,17 +17,22 @@ namespace BeatTracker.UI
     class PreprocessingVisualization : ApplicationContext
     {
         private readonly Thread thread;
-        private readonly Tracker tracker;
+        private readonly ITracker _tracker;
 
         public PreprocessingVisualization()
         {
             //var reader = new MonoWaveFileReader("data/110-130bpm_click.wav", isSourceStereo: false);
             //var reader = new MonoWaveFileReader("data/Albums-Ballroom_Classics4-01.wav", isSourceStereo: false);
+
+            //var reader = new MonoWaveFileReader("data/10894322.clip.mp3_repeated_60sec.wav", isSourceStereo: false);
+            //var reader = new MonoWaveFileReader("data/SeanPaul-Breathe-Clean.wav", isSourceStereo: true);
+
             //var reader = new WaveInputDeviceReader(0);
             //tracker = TrackerSetup.CreateWith<MidiMetronomeWriter>(reader);
 
-            var _reader = new WaveInputDeviceReader(0);
-            var _tracker = new DftTracker(_reader);
+            var reader = new WaveInputDeviceReader(0);
+            //_tracker = new Tracker(reader);
+            _tracker = new DftTracker(reader);
 
             foreach (var inst in SpectrumLogger.Instances)
             {
@@ -45,11 +50,12 @@ namespace BeatTracker.UI
 
             thread = new Thread(_tracker.Start);
             thread.Start();
+            //thread.Join();
         }
 
         private void StopApplication()
         {
-            tracker.Stop();
+            _tracker.Stop();
             thread.Abort();
             thread.Join();
             Application.Exit();

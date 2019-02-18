@@ -24,7 +24,7 @@ namespace BeatTracker.Readers
             _reader = new WaveFileReader(stream);
 
             _isSourceStereo = isSourceStereo;
-
+            
             if (_isSourceStereo)
                 _sampleProvider = new StereoToMonoProvider16(_reader).ToSampleProvider();
             else

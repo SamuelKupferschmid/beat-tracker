@@ -23,6 +23,8 @@ namespace BeatTracker.DFTPrototype.Utils
 
             var bins = (data.Length / 2) + 1;
 
+            //var bins = (int)Math.Ceiling(data.Length / 2f);
+
             return complexData.Take(bins).ToArray();
         }
 

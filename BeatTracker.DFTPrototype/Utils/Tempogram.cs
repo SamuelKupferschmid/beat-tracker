@@ -102,13 +102,13 @@ namespace BeatTracker.DFTPrototype.Utils
 
             if (previous != null)
             {
-                var range = Math.Ceiling((_maxBpm - _minBpm) * 0.02);
+                var range = Math.Ceiling((_maxBpm - _minBpm) * 0.05);
                 var index = Math.Floor(previous.Bpm - _minBpm);
                 start = (int)Math.Max(index - range, 0);
                 end = (int)Math.Min(index + range, data.Length);
             }
 
-            for (int i = 0; i < data.Length; i++)
+            for (int i = start; i < end; i++)
             {
                 if (bestIndex < 0
                     || data[i].Magnitude > bestValue.Magnitude)
@@ -131,7 +131,7 @@ namespace BeatTracker.DFTPrototype.Utils
 
             if (previous != null)
             {
-                var range = Math.Ceiling((_maxBpm - _minBpm) * 0.02);
+                var range = Math.Ceiling((_maxBpm - _minBpm) * 0.05);
                 var index = Math.Floor(previous.Bpm - _minBpm);
                 start = (int)Math.Max(index - range, 0);
                 end = (int)Math.Min(index + range, data.Length);

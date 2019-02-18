@@ -9,5 +9,9 @@ namespace BeatTracker.Tracking
     public interface ITracker
     {
         event EventHandler<BeatInfo> BeatInfoChanged;
+
+        void Start();
+
+        void Stop();
     }
 }

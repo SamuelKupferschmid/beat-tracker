@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BeatTracker.DFTPrototype.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,9 +16,9 @@ namespace BeatTracker.UI
         static void Main()
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            // Application.Run(new PreprocessingVisualization());
+            // Application.SetCompatibleTextRenderingDefault(false);
+                        
+            //Application.Run(new PreprocessingVisualization());
 
             Application.Run(new MainForm());
         }

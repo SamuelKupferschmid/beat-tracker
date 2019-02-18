@@ -40,7 +40,9 @@ namespace BeatTracker.Readers
             _bufferedWaveProvider.BufferLength = SampleBufferSize * waveFormat.BlockAlign;
             _bufferedWaveProvider.DiscardOnBufferOverflow = false;
             
-            _sampleProvider = _bufferedWaveProvider.ToSampleProvider();
+            _sampleProvider = _bufferedWaveProvider
+                .ToSampleProvider()
+                .ToMono();
             
             _device.DataAvailable += _device_DataAvailable;
         }

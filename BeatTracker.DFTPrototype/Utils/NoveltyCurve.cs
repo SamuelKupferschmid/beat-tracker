@@ -1,41 +1,55 @@
 ﻿using MathNet.Numerics;
+using MathNet.Numerics.Interpolation;
 using MathNet.Numerics.LinearAlgebra;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BeatTracker.DFTPrototype.Utils
 {
     public static class NoveltyCurve
     {
-        public static float[] Preprocess(float[] data)
+        public static float[] Preprocess(int sampleRate, float[] data)
         {
-            var spectrogram = Vector<float>.Build.DenseOfArray(data);
+            var spectrogram = new float[data.Length];
 
             // normalize
-            var max = spectrogram.Max();
-            spectrogram = spectrogram.Divide(max);
+            var max = data.Max();
+            max = 1;
 
             // convert to dB
             var thresh = (float)Math.Pow(10, -74d / 20);
-            spectrogram = spectrogram.PointwiseMaximum(thresh);
 
-            // ToDo bandwide processing? - geht wahrsch. um die Gewichtung der Freq.-Bänder...
-            var bands = new float[]
+            // set band weights
+            var bands = new List<(float fromFreq, float toFreq, float weight)>()
             {
-                500, // von 0 Hz bis 500 Hz
-                1250, // von 500 Hz bis 1250 Hz
-                3125, // von 1250 Hz - 3125 Hz
-                7812.5f, // von 3125 Hz - 7812.5 Hz
-                11025 // von 7812.5 Hz - 11025 Hz
+                (0, 500, 1),
+                (500, 1250, 1),
+                (1250, 3125, 1),
+                (3125, 7812.5f, 1),
+                (7812.5f, 11025, 1),
+                (11025, 22050, 1)
             };
-
+            
             // log compression
             var compressionC = 1000f;
-            spectrogram = spectrogram
-                            .Multiply(compressionC)
-                            .Add(1)
-                            .PointwiseLog()
-                            .Divide((float)Math.Log(1 + compressionC));
+
+            var freqToIndex = (float)data.Length / (sampleRate / 2);
+
+            foreach (var band in bands)
+            {
+                if (band.toFreq <= sampleRate / 2)
+                {
+                    var start = (int)Math.Ceiling(freqToIndex * band.fromFreq);
+                    var end = (int)Math.Ceiling(freqToIndex * band.toFreq);
+
+                    for (int i = start; i < end; i++)
+                    {
+                        var value = Math.Max(data[i] / max, thresh);
+                        spectrogram[i] = (float)(Math.Log((value * compressionC * band.weight) + 1) / Math.Log(1 + compressionC * band.weight));
+                    }
+                }
+            }
 
             return spectrogram.ToArray();
         }
@@ -69,10 +83,10 @@ namespace BeatTracker.DFTPrototype.Utils
             return smoothedDiffFilter;
         }
 
-        public static double[] SmoothLocalAverageFilter(int sampleRate, int stepSize)
+        public static double[] SmoothLocalAverageFilter(int featureRate)
         {
             var localAverageDuration = TimeSpan.FromSeconds(1.5d);
-            var localAverageWindowLength = (int)Math.Max(Math.Ceiling(localAverageDuration.TotalSeconds * sampleRate / stepSize), 3);
+            var localAverageWindowLength = (int)Math.Max(Math.Ceiling(localAverageDuration.TotalSeconds * featureRate), 3);
             var localAverageFilter = Window.Hann(localAverageWindowLength);
             var localAverageFilterSum = localAverageFilter.Sum();
             for (int i = 0; i < localAverageFilter.Length; i++)
@@ -90,6 +104,26 @@ namespace BeatTracker.DFTPrototype.Utils
                 if (discardNegativeValues && data[i] < 0)
                     data[i] = 0;
             }
+        }
+
+        public static float[] Resample(float[] data, int samples)
+        {
+            var x = Enumerable.Range(0, data.Length).Select(i => (double)i).ToArray();
+            var y = data.Select(f => (double)f).ToArray();
+
+            //var interpolate = CubicSpline.InterpolateAkimaSorted(x, y);
+            var interpolate = LinearSpline.InterpolateSorted(x, y);
+
+            var resampledData = new float[samples];
+            var step = ((float)data.Length / resampledData.Length);
+
+            for (int i = 0; i < resampledData.Length; i++)
+            {
+                var t = i * step;
+                resampledData[i] = (float)interpolate.Interpolate(t);
+            }
+
+            return resampledData;
         }
     }
 }
