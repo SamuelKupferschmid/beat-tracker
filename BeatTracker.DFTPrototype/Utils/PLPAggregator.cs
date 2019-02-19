@@ -41,7 +41,7 @@ namespace BeatTracker.DFTPrototype.Utils
 
         public int StepCount => _stepBuffer.GetLength(0);
 
-        public float Average => _buffer.Average();
+        public float Average() => _buffer.Average();
 
         public long TotalProcessed => _totalProcessed;
 
