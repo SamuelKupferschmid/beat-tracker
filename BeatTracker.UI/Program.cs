@@ -16,11 +16,11 @@ namespace BeatTracker.UI
         static void Main()
         {
             Application.EnableVisualStyles();
-            // Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetCompatibleTextRenderingDefault(false);
                         
-            //Application.Run(new PreprocessingVisualization());
+            Application.Run(new PreprocessingVisualization());
 
-            Application.Run(new MainForm());
+            //Application.Run(new MainForm());
         }
     }
 }

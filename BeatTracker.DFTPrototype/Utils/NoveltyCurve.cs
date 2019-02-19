@@ -13,9 +13,8 @@ namespace BeatTracker.DFTPrototype.Utils
         {
             var spectrogram = new float[data.Length];
 
-            // normalize
-            var max = data.Max();
-            max = 1;
+            // normalize (do not normalize)
+            // var max = data.Max();
 
             // convert to dB
             var thresh = (float)Math.Pow(10, -74d / 20);
@@ -45,7 +44,7 @@ namespace BeatTracker.DFTPrototype.Utils
 
                     for (int i = start; i < end; i++)
                     {
-                        var value = Math.Max(data[i] / max, thresh);
+                        var value = Math.Max(data[i], thresh);
                         spectrogram[i] = (float)(Math.Log((value * compressionC * band.weight) + 1) / Math.Log(1 + compressionC * band.weight));
                     }
                 }

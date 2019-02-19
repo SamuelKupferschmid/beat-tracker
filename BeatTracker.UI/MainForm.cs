@@ -33,7 +33,7 @@ namespace BeatTracker.UI
                 {
                     _mainForm.lblLaufzeit.Text = $"Laufzeit: {_mainForm._stopwatch.Elapsed}";
                     _mainForm.lblBPM.Text = $"Aktuelle BPM: {info.Bpm:F2}";
-                    _mainForm.lblConfidence.Text = $"Konfidenz: {info.Confidence:F2}";
+                    _mainForm.lblConfidence.Text = $"Konfidenz: {(info.Confidence * 100):F2}";
                     _mainForm.pnlCircle.BackColor = Color.Orange;
                     await Task.Delay(150).ContinueWith(task =>
                     {

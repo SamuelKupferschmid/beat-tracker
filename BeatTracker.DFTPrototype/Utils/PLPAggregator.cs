@@ -41,7 +41,7 @@ namespace BeatTracker.DFTPrototype.Utils
 
         public int StepCount => _stepBuffer.GetLength(0);
 
-        public float Mean => _buffer.Average();
+        public float Average => _buffer.Average();
 
         public long TotalProcessed => _totalProcessed;
 
@@ -60,16 +60,6 @@ namespace BeatTracker.DFTPrototype.Utils
             UpdateInternalBuffer();
 
             _totalProcessed += StepSize;
-        }
-
-        public void Clear()
-        {
-            for (int i = 0; i < StepCount; i++)
-                for (int j = 0; j < BufferSize; j++)
-                _stepBuffer[i, j] = 0;
-
-            for (int i = 0; i < BufferSize; i++)
-                _buffer[i] = 0;
         }
 
         private void IncrementStepIndex()

@@ -15,9 +15,6 @@ namespace BeatTracker.DFTPrototype.Utils
         private readonly int _stepSize;
         private readonly float _featureRate;
 
-        private readonly int _minBpm;
-        private readonly int _maxBpm;
-
         private float[] _bpmFrequencies;
 
         private double[] _windowPLP;
@@ -31,14 +28,12 @@ namespace BeatTracker.DFTPrototype.Utils
             _bufferSize = bufferSize;
             _stepSize = stepSize;
             _featureRate = featureRate;
-            _minBpm = minBpm;
-            _maxBpm = maxBpm;
 
-            _bpmFrequencies = new float[_maxBpm - _minBpm];
+            _bpmFrequencies = new float[maxBpm - minBpm];
 
-            for (int i = _minBpm; i < _maxBpm; i++)
+            for (int i = minBpm; i < maxBpm; i++)
             {
-                _bpmFrequencies[i - _minBpm] = i / 60.0f;
+                _bpmFrequencies[i - minBpm] = i / 60.0f;
             }
 
             _DFT_Cos_Matrix = Matrix<float>.Build.Dense(_bpmFrequencies.Length, bufferSize);
@@ -92,23 +87,12 @@ namespace BeatTracker.DFTPrototype.Utils
             return tempogram;
         }
 
-        public BeatInfo BestBpm(Complex32[] data, BeatInfo previous = null)
+        public BeatInfo BestBpm(Complex32[] data)
         {
             int bestIndex = -1;
             Complex32 bestValue = Complex32.Zero;
 
-            int start = 0;
-            int end = data.Length;
-
-            if (previous != null)
-            {
-                var range = Math.Ceiling((_maxBpm - _minBpm) * 0.05);
-                var index = Math.Floor(previous.Bpm - _minBpm);
-                start = (int)Math.Max(index - range, 0);
-                end = (int)Math.Min(index + range, data.Length);
-            }
-
-            for (int i = start; i < end; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 if (bestIndex < 0
                     || data[i].Magnitude > bestValue.Magnitude)
@@ -121,23 +105,12 @@ namespace BeatTracker.DFTPrototype.Utils
             return new BeatInfo(_bpmFrequencies[bestIndex] * 60, DateTime.MaxValue, bestValue.Magnitude);
         }
 
-        public float[] PLPCurve(Complex32[] data, BeatInfo previous = null)
+        public float[] PLPCurve(Complex32[] data)
         {
             int bestIndex = -1;
             Complex32 bestValue = Complex32.Zero;
 
-            int start = 0;
-            int end = data.Length;
-
-            if (previous != null)
-            {
-                var range = Math.Ceiling((_maxBpm - _minBpm) * 0.05);
-                var index = Math.Floor(previous.Bpm - _minBpm);
-                start = (int)Math.Max(index - range, 0);
-                end = (int)Math.Min(index + range, data.Length);
-            }
-
-            for (int i = start; i < end; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 if (bestIndex < 0
                     || data[i].Magnitude > bestValue.Magnitude)

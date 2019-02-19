@@ -11,26 +11,18 @@ namespace BeatTracker.DFTPrototype.Utils
 {
     public static class Spectrogram
     {
-        public static Complex[] ToComplexSpectrogram(float[] data)
+        public static float[] ToMagnitudeSpectrogram(float[] data, double[] window)
         {
-            var window = Window.Hann(data.Length);
-
             var complexData = Enumerable.Range(0, data.Length)
                 .Select(i => new Complex(data[i] * (float)window[i], 0))
                 .ToArray();
 
             Fourier.Forward(complexData, FourierOptions.Matlab);
 
+            // consider only first half of fft
             var bins = (data.Length / 2) + 1;
+            complexData = complexData.Take(bins).ToArray(); 
 
-            //var bins = (int)Math.Ceiling(data.Length / 2f);
-
-            return complexData.Take(bins).ToArray();
-        }
-
-        public static float[] ToMagnitudeSpectrogram(float[] data)
-        {
-            var complexData = ToComplexSpectrogram(data);
             return complexData.Select(c => (float)c.Magnitude).ToArray();
         }
     }

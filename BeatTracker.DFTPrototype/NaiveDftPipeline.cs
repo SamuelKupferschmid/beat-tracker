@@ -3,6 +3,7 @@ using BeatTracker.Helpers;
 using BeatTracker.Timers;
 using BeatTracker.Tracking;
 using BeatTracker.Utils;
+using MathNet.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace BeatTracker.DFTPrototype
 
         private float _featureRate;
 
+        private double[] _stftWindow;
         private DataBuffer<float> _stftBuffer;
 
         private double[] _smoothNormalizeWindow;
@@ -69,6 +71,7 @@ namespace BeatTracker.DFTPrototype
 
             _featureRate = (float)sampleRate / fftStepSize;
 
+            _stftWindow = Window.Hann(fftWindowSize);
             _stftBuffer = new DataBuffer<float>(fftWindowSize, fftStepSize);
             _stftBuffer.NextFrame += StftBuffer_NextFrame;
 
@@ -123,7 +126,7 @@ namespace BeatTracker.DFTPrototype
         {
             // Console.WriteLine($"STFT [{++stftCount}]");
 
-            var spec = Spectrogram.ToMagnitudeSpectrogram(data);
+            var spec = Spectrogram.ToMagnitudeSpectrogram(data, _stftWindow);
 
             spec = NoveltyCurve.Preprocess(_sampleRate, spec);
 
@@ -212,15 +215,13 @@ namespace BeatTracker.DFTPrototype
 
         private bool IsSimilarBpm(double bpm1, double bpm2)
         {
-            return false;
-
             bpm1 = Math.Round(bpm1 * 100) / 100;
             bpm2 = Math.Round(bpm2 * 100) / 100;
 
             var small = bpm1 < bpm2 ? bpm1 : bpm2;
             var big = bpm1 > bpm2 ? bpm1 : bpm2;
 
-            while (small > 90)
+            while (small > 60)
                 small /= 2;
 
             while (big / 2 > small)
@@ -270,7 +271,7 @@ namespace BeatTracker.DFTPrototype
 
 
             if (_currentBpm == null
-                || (Math.Abs(_currentBpm.Bpm - bestBpm.Bpm) > 2.5f)
+                || (Math.Abs(_currentBpm.Bpm - bestBpm.Bpm) > 0.5f)
                     && bestBpm.Confidence >= _slidingBpmConfidence.Where(c => c > 0).Average())
                 //|| ((Math.Abs(_currentBpm.Bpm - bestBpm.Bpm) > 0.5f)
                 //    && bestBpm.Confidence >= _slidingBpmConfidence.Where(c => c > 0).Average()))
