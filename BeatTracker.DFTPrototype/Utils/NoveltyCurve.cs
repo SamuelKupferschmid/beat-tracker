@@ -67,7 +67,7 @@ namespace BeatTracker.DFTPrototype.Utils
 
         public static double[] SmoothDifferentiateFilter(int sampleRate, int stepSize)
         {
-            var smoothedDiffDuration = TimeSpan.FromSeconds(0.3d);
+            var smoothedDiffDuration = TimeSpan.FromSeconds(0.15d);
             var smoothedDiffWindowLength = (int)Math.Max(Math.Ceiling(smoothedDiffDuration.TotalSeconds * sampleRate / stepSize), 5);
             smoothedDiffWindowLength = (int)((2 * Math.Ceiling(smoothedDiffWindowLength / 2d)) + 1);
             var smoothedDiffFilter = Window.Hann(smoothedDiffWindowLength);
@@ -84,12 +84,14 @@ namespace BeatTracker.DFTPrototype.Utils
 
         public static double[] SmoothLocalAverageFilter(int featureRate)
         {
-            var localAverageDuration = TimeSpan.FromSeconds(1.5d);
+            var localAverageDuration = TimeSpan.FromSeconds(0.5d);
             var localAverageWindowLength = (int)Math.Max(Math.Ceiling(localAverageDuration.TotalSeconds * featureRate), 3);
             var localAverageFilter = Window.Hann(localAverageWindowLength);
             var localAverageFilterSum = localAverageFilter.Sum();
             for (int i = 0; i < localAverageFilter.Length; i++)
+            {
                 localAverageFilter[i] /= localAverageFilterSum;
+            }
 
             return localAverageFilter;
         }

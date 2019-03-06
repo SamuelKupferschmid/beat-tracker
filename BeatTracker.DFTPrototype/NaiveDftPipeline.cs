@@ -61,7 +61,7 @@ namespace BeatTracker.DFTPrototype
             _dateTime = dateTime;
 
             var fftWindowSize = 1024;
-            var fftStepSize = 512;
+            var fftStepSize = 1024;
 
             _featureRate = (float)sampleRate / fftStepSize;
 
@@ -81,7 +81,7 @@ namespace BeatTracker.DFTPrototype
             _localAverageBuffer = new DataBuffer<float>(_smoothLocalAverageWindow.Length);
             _localAverageBuffer.NextFrame += LocalAverageBuffer_NextFrame;
 
-            var tempogramWindowLength = 6;
+            var tempogramWindowLength = 8;
             var tempogramBufferSize = (int)Math.Ceiling(tempogramWindowLength * _featureRate);
             var tempogramStepSize = (int)Math.Ceiling(_featureRate / 10);
 
@@ -93,6 +93,8 @@ namespace BeatTracker.DFTPrototype
             _aggregator = new PLPAggregator(tempogramBufferSize, tempogramStepSize);
 
             _slidingBpmConfidenceBuffer = new ConcurrentSlidingEnumerable<double>(tempogramBufferSize / 2);
+
+            _normalizeFactor = 1;
         }
 
         public void Write(float[] data, int length)
@@ -124,7 +126,8 @@ namespace BeatTracker.DFTPrototype
         private void NormalizeBuffer_NextFrame(float[] data)
         {
             NoveltyCurve.ApplyFilter(data, _smoothNormalizeWindow, discardNegativeValues: false);
-            _normalizeFactor = data.Sum();
+            //_normalizeFactor = data.Sum();
+            _normalizeFactor = 1;
         }
 
         private void SmoothDiffBuffer_NextFrame(float[] data)
@@ -158,7 +161,7 @@ namespace BeatTracker.DFTPrototype
 
         private BeatInfo _currentBpm;
         private float _beatConfidenceThreshold = 0f;
-        private int _bpmConfidenceSize = 25;
+        private int _bpmConfidenceSize = 10;
 
         private ConcurrentSlidingEnumerable<double> _slidingBpmConfidenceBuffer;
 
@@ -175,17 +178,17 @@ namespace BeatTracker.DFTPrototype
             }                       
             
             if (_currentBpm == null
-                || (Math.Abs(_currentBpm.Bpm - bestBpm.Bpm) > 0.5f)
-                    && bestBpm.Confidence >= _slidingBpmConfidenceBuffer.Where(c => c > 0).Average())
+                || (Math.Abs(_currentBpm.Bpm - bestBpm.Bpm) > 0.5f))
+                    //&& bestBpm.Confidence >= _slidingBpmConfidenceBuffer.Where(c => c > 0).Average())
             {
                 // Console.WriteLine($"BPM (previous):{_currentBpm?.Bpm} {_currentBpm?.Confidence:F4} | BPM (current):{bestBpm.Bpm} {bestBpm.Confidence:F4}");
                 _currentBpm = bestBpm;
 
-                for(int i = 0; i < _bpmConfidenceSize; i++)
-                    _slidingBpmConfidenceBuffer.Push(bestBpm.Confidence);
+                //for (int i = 0; i < _bpmConfidenceSize; i++)
+                //    _slidingBpmConfidenceBuffer.Push(bestBpm.Confidence);
             }
             
-            _slidingBpmConfidenceBuffer.Push(tempogram.Select(c => c.Magnitude).OrderByDescending(f => f).Take(_bpmConfidenceSize).Average());
+            //_slidingBpmConfidenceBuffer.Push(tempogram.Select(c => c.Magnitude).OrderByDescending(f => f).Take(_bpmConfidenceSize).Average());
             
             _aggregator.Aggregate(plpCurve, plpCurve.Length);
             _beatConfidenceThreshold = _aggregator.Average();

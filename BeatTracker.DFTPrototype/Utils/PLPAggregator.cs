@@ -43,6 +43,8 @@ namespace BeatTracker.DFTPrototype.Utils
 
         public float Average() => _buffer.Average();
 
+        public float Max() => _buffer.Max();
+
         public long TotalProcessed => _totalProcessed;
 
         public float ElementAt(int index) => _buffer[index];

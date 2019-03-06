@@ -17,10 +17,15 @@ namespace BeatTracker.UI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-                        
-            Application.Run(new PreprocessingVisualization());
 
-            //Application.Run(new MainForm());
+            //var buffer = new DataBuffer<int>(4, 2);
+            //buffer.NextFrame += (data) => Console.WriteLine(string.Join(", ", data));
+            //for (int i = 0; i < 100; i++)
+            //    buffer.Write(new[] { i }, 1);
+
+            //Application.Run(new PreprocessingVisualization());
+
+            Application.Run(new MainForm());
         }
     }
 }
